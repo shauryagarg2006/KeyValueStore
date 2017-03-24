@@ -54,6 +54,9 @@ local.properties
 # Code Recommenders
 .recommenders/
 
+Chord/target/*
+ObjectStore/target/*
+
 Resources/Ansible_Scripts/command.ansible
 Resources/Ansible_Scripts/main.retry
 #src/main/resources/log4j.properties
