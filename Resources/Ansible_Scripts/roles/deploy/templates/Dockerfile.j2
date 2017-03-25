@@ -1,0 +1,8 @@
+FROM openjdk:8
+RUN apt-get update
+RUN apt-get -y install maven2
+WORKDIR /root
+CMD mkdir /root/KeyValueStore
+WORKDIR KeyValueStore
+#CMD rmiregistry &
+CMD mvn compile exec:java

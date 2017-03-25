@@ -1,0 +1,2 @@
+[nodes]
+keyvalue ansible_port=22 ansible_host={{IP_ADDR}} ansible_user={{UNITY_ID}}

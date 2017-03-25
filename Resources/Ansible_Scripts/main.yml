@@ -1,0 +1,10 @@
+---
+- name: Deploying KeyValueStore
+  hosts: keyvalue
+  become: yes
+  vars:
+    home_path: /home/{{UNITY_ID}}
+  roles:
+    - docker
+    - deploy
+    - logServer
