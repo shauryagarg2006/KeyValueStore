@@ -1,0 +1,42 @@
+---
+- name: Creating Directory for Docker
+  file: 
+    path: "{{home_path}}/DockerImage" 
+    state: directory
+
+- name: Cloning repository
+  git:
+    repo: "https://{{UNITY_ID}}:{{GIT_TOKEN}}@{{git_repo}}"
+    dest: "{{home_path}}/DockerImage/keyvalue"
+    version: "{{GIT_BRANCH}}"
+  register: git_clone
+
+#- name: Adding Remote logging Url in log4j.properties
+#  replace:
+#    dest: "{{home_path}}/DockerImage/keyvalue/src/main/resources/log4j.properties"
+#    regexp: "loghost"
+#    replace: "{{IP_ADDR}}"
+
+- name: Copy Docker DockerFile
+  template:
+    force: yes
+    src: "templates/Dockerfile.j2"
+    dest: "{{home_path}}/DockerImage/Dockerfile" 
+    mode: 0700
+
+- name: Remove docker image
+  shell: "docker rm $(docker ps -a -q);docker rmi keyvalue"
+  register: remove_docker_img
+  when: git_clone.changed
+  failed_when: "'FAILED' in remove_docker_img.stderr"
+
+
+- name: Check If DockerImage Exists
+  shell: docker images 
+  register: docker_images
+
+- name: "Build Docker DockerImage"
+  shell: docker build -t keyvalue . 
+  args:
+   chdir: "{{home_path}}/DockerImage/"
+  when: "docker_images.stdout.find('keyvalue') == -1"

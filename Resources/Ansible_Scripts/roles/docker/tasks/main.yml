@@ -1,0 +1,46 @@
+---
+    
+- name: Install dependencies
+  become: yes
+  apt: 
+    pkg: "{{item}}" 
+    state: latest
+    update_cache: yes
+  with_items: "{{dependencies}}"
+  ignore_errors: yes
+
+- name: Install Python-Docker Package
+  pip:
+    name: docker
+
+- name: Import the Docker repository key
+  apt_key:
+      url: "{{apt_key}}"
+      state: present
+      id: 2C52609D
+
+- name: Add docker apt repository
+  apt_repository:
+    repo: "{{apt_repo}}"
+    update_cache: yes
+
+- name: Install Docker
+  apt:
+      name: docker-engine
+      update_cache: yes
+  ignore_errors: yes
+  register: docker_install
+
+- name: Add {{UNITY_ID}} to docker group
+  user:
+    name: "{{UNITY_ID}}"
+    groups: docker
+    append: yes
+  register: docker_install
+
+- name: Restarting Docker Service
+  service:
+    name: docker
+    state: restarted
+  when: docker_install.changed
+  

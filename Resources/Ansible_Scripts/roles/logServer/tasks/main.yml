@@ -1,0 +1,29 @@
+---
+    
+- name: Downloading Log4j Jar 
+  maven_artifact:
+    group_id: log4j
+    artifact_id: log4j
+    version: 1.2.17
+    repository_url: http://repo1.maven.org/maven2
+    dest: "{{home_path}}/log_server/log4j.jar"
+
+- name: Copy log4j Server Properties
+  template:
+    force: yes
+    src: "templates/log4j.properties.j2"
+    dest: "{{home_path}}/log_server/log4j-server.properties"
+    mode: 0700
+
+- name: Check If log Server is running
+  shell: ps -ax
+  register: log_server
+
+- name: Start logging server
+  shell: "{{ item }}"
+  with_items:
+    - nohup java -classpath log4j.jar org.apache.log4j.net.SimpleSocketServer 4712 log4j-server.properties </dev/null >/dev/null 2>&1 &
+    #- disown -h %1
+  args:
+   chdir: "{{home_path}}/log_server/"
+  when: "log_server.stdout.find('SimpleSocketServer') == -1"
