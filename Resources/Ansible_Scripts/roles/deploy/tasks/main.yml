@@ -11,11 +11,11 @@
     version: "{{GIT_BRANCH}}"
   register: git_clone
 
-- name: Adding Remote logging Url in log4j.properties
-  replace:
-    dest: "{{home_path}}/DockerImage/keyvalue/src/main/resources/log4j.properties"
-    regexp: "loghost"
-    replace: "{{IP_ADDR}}"
+#- name: Adding Remote logging Url in log4j.properties
+#  replace:
+#    dest: "{{home_path}}/DockerImage/keyvalue/src/main/resources/log4j.properties"
+#    regexp: "loghost"
+#    replace: "{{IP_ADDR}}"
 
 - name: Copy Docker DockerFile
   template:
