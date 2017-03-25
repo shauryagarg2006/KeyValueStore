@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.ncsu</groupId>
-  <artifactId>ObjectStore</artifactId>
+  <artifactId>client</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>ObjectStore</name>
+  <name>client</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -32,26 +32,25 @@
     </dependency>
 
     <dependency>
-      <groupId>edu.ncsu.chord</groupId>
-      <artifactId>chord</artifactId>
+      <groupId>edu.ncsu</groupId>
+      <artifactId>ObjectStore</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
-  <!--<build>-->
-    <!--<plugins>-->
-      <!--<plugin>-->
-        <!--<groupId>org.codehaus.mojo</groupId>-->
-        <!--<artifactId>exec-maven-plugin</artifactId>-->
-        <!--<version>1.2.1</version>-->
-        <!--<configuration>-->
-          <!--<mainClass>edu.ncsu.store.ObjectServer</mainClass>-->
-          <!--<arguments>-->
-            <!--<argument>172.17.0.2</argument>-->
-          <!--</arguments>-->
-        <!--</configuration>-->
-      <!--</plugin>-->
-    <!--</plugins>-->
-  <!--</build>-->
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>edu.ncsu.client.Client</mainClass>
+          <arguments>
+            <argument>172.17.0.2</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
