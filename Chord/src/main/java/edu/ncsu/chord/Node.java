@@ -91,7 +91,7 @@ public class Node implements NodeOperations {
     ChordID<InetAddress> successorID = null;
     ChordID<InetAddress> predecessorID = getPredecessor(selfChordID, id);
     logger.debug("Predecessor of " + id + " is found to be " + predecessorID);
-    NodeOperations predecessorROR = RMIUtils.getRemoteNodeObject(predecessorID.getKey());
+    NodeOperations predecessorROR = ChordRMI.getRemoteNodeObject(predecessorID.getKey());
     if (predecessorROR == null) {
       logger.error("Unable to get RMI object for " + predecessorID);
     } else {
@@ -120,10 +120,10 @@ public class Node implements NodeOperations {
 		 " Caller: " + callerID + "Parameters: " + id);
 
     ChordID<InetAddress> predecessor = selfChordID;
-    NodeOperations predecessorROR = RMIUtils.getRemoteNodeObject(selfChordID.getKey());
+    NodeOperations predecessorROR = ChordRMI.getRemoteNodeObject(selfChordID.getKey());
     while (!id.inRange(predecessor, predecessorROR.getSuccessor(selfChordID), false, true)) {
       predecessor = predecessorROR.getClosestPrecedingFinger(selfChordID, id);
-      predecessorROR = RMIUtils.getRemoteNodeObject(predecessor.getKey());
+      predecessorROR = ChordRMI.getRemoteNodeObject(predecessor.getKey());
       if (predecessorROR == null) {
 	logger.error("Unable to get RMI object for " + predecessor);
 	predecessor = null;
@@ -173,7 +173,7 @@ public class Node implements NodeOperations {
 
      /* Get RMI reference of bootstrap node */
       for (int i = 0; i < bootstrapNodes.size() && bootstrapNodeROR == null; i++) {
-        bootstrapNodeROR = RMIUtils.getRemoteNodeObject(bootstrapNodes.get(i));
+        bootstrapNodeROR = ChordRMI.getRemoteNodeObject(bootstrapNodes.get(i));
         if (bootstrapNodeROR == null) {
           logger.error("Unable to get RMI object for " + bootstrapNodes.get(i));
         }
@@ -203,7 +203,7 @@ public class Node implements NodeOperations {
     ChordID<InetAddress> successorChordID = getSuccessor(selfChordID);
       /* Periodically check predecessor of current successor. This will tell if a new node has
       joined in between */
-    NodeOperations successorROR = RMIUtils.getRemoteNodeObject(successorChordID.getKey());
+    NodeOperations successorROR = ChordRMI.getRemoteNodeObject(successorChordID.getKey());
     if (successorROR == null) {
       logger.error("Unable to get RMI object for " + successorChordID
 		   + " will try again in next interval");
@@ -213,7 +213,7 @@ public class Node implements NodeOperations {
       if (predecessorOfSuccessor.inRange(selfChordID, successorChordID, false, false)) {
 	setSuccessor(predecessorOfSuccessor);
       }
-      successorROR = RMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
+      successorROR = ChordRMI.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
       if (successorROR == null) {
 	logger.error("Unable to notify " + getSuccessor(selfChordID)
 		     + " will try again in next interval");
@@ -251,7 +251,8 @@ public class Node implements NodeOperations {
       return;
     }
 
-    NodeOperations previousEntryROR = RMIUtils.getRemoteNodeObject(successorList.get(index - 1).getKey());
+    NodeOperations previousEntryROR = ChordRMI.getRemoteNodeObject(successorList.get(index - 1)
+                                                                       .getKey());
     if (previousEntryROR != null) {
       ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
       synchronized (this) {
@@ -307,7 +308,7 @@ public class Node implements NodeOperations {
 		 " Caller: " + "Parameters: ");
 
       /* Always re-search for successor of entry 1 in finger table to remove stale entries */
-    NodeOperations successorROR = RMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
+    NodeOperations successorROR = ChordRMI.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
 
     if (successorROR == null) {
 	/* unable to contact with successor mark this successor as failed
@@ -316,7 +317,7 @@ public class Node implements NodeOperations {
       logger.error("Unable to get RMI object for successor!");
       /* Check next available node in successor list */
       for (int i = 1; i < successorList.size(); i++) {
-	successorROR = RMIUtils.getRemoteNodeObject(successorList.get(i).getKey());
+	successorROR = ChordRMI.getRemoteNodeObject(successorList.get(i).getKey());
 	if (successorROR != null) {
 	  setSuccessor(successorList.get(i));
 	  break;
@@ -355,7 +356,7 @@ public class Node implements NodeOperations {
 
 
     /* Also check if your predecessor is still up and running */
-    if (RMIUtils.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
+    if (ChordRMI.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
       synchronized (this) {
         predecessorChordID = selfChordID;
       }

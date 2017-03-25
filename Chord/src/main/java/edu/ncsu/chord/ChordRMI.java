@@ -11,10 +11,10 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by amit on 22/2/17.
  */
-class RMIUtils {
+class ChordRMI {
 
   /* Keep all loggers transient so that they are not passed over RMI call */
-  private final transient static Logger logger = Logger.getLogger(RMIUtils.class);
+  private final transient static Logger logger = Logger.getLogger(ChordRMI.class);
 
   /* RMI regsitry on each Node */
   private static Registry registry;
@@ -23,11 +23,11 @@ class RMIUtils {
   private static RegistryManager registryManager;
 
   static void setRegistry(Registry registry) {
-    RMIUtils.registry = registry;
+    ChordRMI.registry = registry;
   }
 
   static void setRegistryManager(RegistryManager rm) {
-    RMIUtils.registryManager = rm;
+    ChordRMI.registryManager = rm;
   }
 
   static void exportNodeObjectRMI(Node n) {

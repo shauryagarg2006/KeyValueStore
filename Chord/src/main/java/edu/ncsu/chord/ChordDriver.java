@@ -36,8 +36,8 @@ public class ChordDriver {
     }
 
     public NodeBuilder setRegistryManager(RegistryManager rm) {
-      RMIUtils.setRegistryManager(rm);
-      RMIUtils.setRegistry(rm.getRegistry());
+      ChordRMI.setRegistryManager(rm);
+      ChordRMI.setRegistry(rm.getRegistry());
       return this;
     }
 
@@ -53,7 +53,7 @@ public class ChordDriver {
   public static void joinChordNetwork(Node node) throws RemoteException {
 
     /* Export this object so that it is available for RMI calls */
-    RMIUtils.exportNodeObjectRMI(node);
+    ChordRMI.exportNodeObjectRMI(node);
 
     node.join(ChordConfig.bootstrapNodes);
 

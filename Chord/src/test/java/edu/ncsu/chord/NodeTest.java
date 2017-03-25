@@ -100,7 +100,7 @@ public class NodeTest {
     /* Gather nodeInfo objects */
     try {
       for (int i = 0; i < ipList.size(); i++) {
-        NodeOperations nodeROR = RMIUtils.getRemoteNodeObject(ipList.get(i));
+        NodeOperations nodeROR = ChordRMI.getRemoteNodeObject(ipList.get(i));
         NodeInfo ninfo = nodeROR.getNodeInfo(testerChordID);
         sortedNodeInfoList.add(ninfo);
       }
