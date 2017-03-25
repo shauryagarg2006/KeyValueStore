@@ -19,8 +19,15 @@ class RMIUtils {
   /* RMI regsitry on each Node */
   private static Registry registry;
 
+  /* A RegistryManager object */
+  private static RegistryManager registryManager;
+
   static void setRegistry(Registry registry) {
     RMIUtils.registry = registry;
+  }
+
+  static void setRegistryManager(RegistryManager rm) {
+    RMIUtils.registryManager = rm;
   }
 
   static void exportNodeObjectRMI(Node n) {

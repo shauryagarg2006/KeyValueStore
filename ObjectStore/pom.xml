@@ -46,9 +46,9 @@
         <version>1.2.1</version>
         <configuration>
           <mainClass>edu.ncsu.store.ObjectServer</mainClass>
-          <!--<arguments>-->
-            <!--<argument>172.17.0.2</argument>-->
-          <!--</arguments>-->
+          <arguments>
+            <argument>172.17.0.2</argument>
+          </arguments>
         </configuration>
       </plugin>
     </plugins>

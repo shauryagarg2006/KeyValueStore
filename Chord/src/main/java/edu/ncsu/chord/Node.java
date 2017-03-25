@@ -172,20 +172,20 @@ public class Node implements NodeOperations {
 		 " Caller: " + "Parameters: " + bootstrapNodes);
 
      /* Get RMI reference of bootstrap node */
-    for (int i = 0; i < bootstrapNodes.size() && bootstrapNodeROR == null; i++) {
-      bootstrapNodeROR = RMIUtils.getRemoteNodeObject(bootstrapNodes.get(i));
-      if (bootstrapNodeROR == null) {
-        logger.error("Unable to get RMI object for " + bootstrapNodes.get(i));
+      for (int i = 0; i < bootstrapNodes.size() && bootstrapNodeROR == null; i++) {
+        bootstrapNodeROR = RMIUtils.getRemoteNodeObject(bootstrapNodes.get(i));
+        if (bootstrapNodeROR == null) {
+          logger.error("Unable to get RMI object for " + bootstrapNodes.get(i));
+        }
       }
 
-
-    if (bootstrapNodeROR == null) {
-      logger.error("Could not join the network. Exiting.");
-      System.exit(0);
-    }
+      if (bootstrapNodeROR == null) {
+        logger.error("Could not join the network. Exiting.");
+        System.exit(0);
+      }
 
     /* Joining the network for first time. Get successor ID from bootstrap node */
-    setSuccessor(bootstrapNodeROR.getSuccessor(selfChordID));
+      setSuccessor(bootstrapNodeROR.getSuccessor(selfChordID));
 
     logger.debug("[Exit] Method:  join " + "@" + selfChordID +
 		 " Caller: " + "Parameters: " + bootstrapNodeROR.getChordID());
