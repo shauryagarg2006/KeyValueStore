@@ -13,6 +13,7 @@ public class StoreDriver {
   public StoreDriver(ArrayList<InetAddress> bootstrapNodes,
 		     boolean joinNetwork) {
     objectServer = new ObjectServer(bootstrapNodes, joinNetwork);
+    StoreRMI.exportStoreObjectRMI(objectServer);
   }
 
   public void put(String key, String value) {
