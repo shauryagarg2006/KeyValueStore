@@ -17,8 +17,11 @@ public class Client {
         bootstrapNode.add(InetAddress.getByName(args[i]));
       }
       StoreDriver driver = new StoreDriver(bootstrapNode, true);
+      driver.put("amit", "hello,world!");
+      System.out.println(driver.get("amit"));
     } catch (Exception e) {
       e.printStackTrace();
     }
+
   }
 }

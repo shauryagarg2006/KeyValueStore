@@ -15,7 +15,7 @@ public class NetworkUtils {
     Inet4Address ipv4 = null;
     Inet6Address ipv6 = null;
     /* Interface name used for Docker containers */
-    String interfaceName = "eth0";
+    String interfaceName = "wlan1";
     try {
       /* TODO: Make this generic. I am assuming that all nodes have eth0@if32 interface */
       NetworkInterface iface = NetworkInterface.getByName(interfaceName);

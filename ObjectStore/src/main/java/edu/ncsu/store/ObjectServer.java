@@ -80,11 +80,21 @@ public class ObjectServer implements ObjectStore {
   }
 
   String get(String key) {
-    return getObjectStore(key).getObject(key);
+    try {
+      return getObjectStore(key).getObject(key);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   boolean put(String key, String value) {
-    return getObjectStore(key).putObject(key, value);
+    try {
+      return getObjectStore(key).putObject(key, value);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
   @Override
