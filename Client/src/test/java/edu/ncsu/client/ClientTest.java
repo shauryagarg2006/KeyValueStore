@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 
 import edu.ncsu.chord.NodeTest;
 import edu.ncsu.store.StoreDriver;
@@ -18,12 +19,12 @@ public class ClientTest {
 	static ArrayList<InetAddress> ipList;
 	private final transient static Logger logger = Logger.getLogger(NodeTest.class);
 
-	public static void main(String args[]) {
+	@Test
+	public void testKeyStore() {
 		try {
 			ArrayList<InetAddress> bootstrapNode = new ArrayList<>();
-			for (int i = 0; i < args.length; i++) {
-				bootstrapNode.add(InetAddress.getByName(args[i]));
-			}
+			// TODO Hard coded BootStrap IP Address
+			bootstrapNode.add(InetAddress.getByName("172.17.0.2"));
 			StoreDriver driver = new StoreDriver(bootstrapNode, false);
 			Map<String, String> values = new HashMap<String, String>();
 			RandomStringGen stringGen = new RandomStringGen();
