@@ -13,8 +13,10 @@ public class StoreDriver {
   public StoreDriver(ArrayList<InetAddress> bootstrapNodes,
 		     boolean joinNetwork) {
     objectServer = new ObjectServer(bootstrapNodes, joinNetwork);
+    /* Initialize RMI object */
     StoreRMI.setRegistryManager(new RegistryManagerImpl());
     StoreRMI.setRegistry(new RegistryManagerImpl().getRegistry());
+    /* Export ObjectStore to be available via RMI */
     StoreRMI.exportStoreObjectRMI(objectServer);
 
   }
