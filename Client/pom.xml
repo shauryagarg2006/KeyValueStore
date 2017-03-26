@@ -47,7 +47,7 @@
         <configuration>
           <mainClass>edu.ncsu.client.Client</mainClass>
           <arguments>
-            <argument>192.168.0.120</argument>
+            <argument>172.17.0.2</argument>
           </arguments>
         </configuration>
       </plugin>
