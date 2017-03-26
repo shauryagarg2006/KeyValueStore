@@ -81,7 +81,8 @@ public class ObjectServer implements ObjectStore {
 
   String get(String key) {
     try {
-      return getObjectStore(key).getObject(key);
+      /* Convert this string value into chord interpretable ChordID */
+      return getObjectStore(key).getObject(new ChordID<String>(key));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -90,7 +91,7 @@ public class ObjectServer implements ObjectStore {
 
   boolean put(String key, String value) {
     try {
-      return getObjectStore(key).putObject(key, value);
+      return getObjectStore(key).putObject(new ChordID<String>(key), value);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -98,7 +99,7 @@ public class ObjectServer implements ObjectStore {
   }
 
   @Override
-  public String getObject(String key) {
+  public String getObject(ChordID<String> key) {
     if (localStorage.containsKey(key)) {
       return localStorage.get(key);
     } else {
@@ -107,8 +108,8 @@ public class ObjectServer implements ObjectStore {
   }
 
   @Override
-  public boolean putObject(String key, String value) {
-    localStorage.put(key, value);
+  public boolean putObject(ChordID<String> key, String value) {
+    localStorage.put(key.getKey(), value);
     	try {
 			logger.info("Stored Successfully at Node-- " + node.getChordID() + "--" + key + "--" + value);
 		} catch (RemoteException e) {
