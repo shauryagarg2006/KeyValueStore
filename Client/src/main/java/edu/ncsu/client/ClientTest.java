@@ -9,8 +9,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import edu.ncsu.chord.ChordID;
-import edu.ncsu.chord.NetworkUtils;
 import edu.ncsu.chord.NodeTest;
 import edu.ncsu.store.StoreDriver;
 
@@ -68,8 +66,10 @@ public class ClientTest {
 				logger.info("Got active node @ " + line);
 				ipList.add(InetAddress.getByName(line));
 			}
+			br.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 }
