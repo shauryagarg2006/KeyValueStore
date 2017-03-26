@@ -10,14 +10,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import edu.ncsu.chord.NodeTest;
 import edu.ncsu.store.StoreDriver;
 
 public class ClientTest {
 
 	static final String inputPath = "/root/KeyValueStore/node.list";
 	static ArrayList<InetAddress> ipList;
-	private final transient static Logger logger = Logger.getLogger(NodeTest.class);
+	private final transient static Logger logger = Logger.getLogger(ClientTest.class);
 
 	@Test
 	public void testKeyStore() {
@@ -28,7 +27,7 @@ public class ClientTest {
 			StoreDriver driver = new StoreDriver(bootstrapNode, false);
 			Map<String, String> values = new HashMap<String, String>();
 			RandomStringGen stringGen = new RandomStringGen();
-			Long average_time = 0L;
+			Double average_time = 0D;
 			for (int iter = 0; iter <= 1020; iter++) {
 				String key = stringGen.nextString();
 				String value = stringGen.nextString();
@@ -43,7 +42,7 @@ public class ClientTest {
 					average_time += after_time - before_time;
 				}
 			}
-			logger.info("Average Time Taken to put key : " + average_time / values.size());
+			logger.info("Average Time Taken to put key : " + (average_time / values.size()));
 			getInetAddressList();
 			driver.verifyKeys(ipList);
 		} catch (Exception e) {
