@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import edu.ncsu.chord.ChordDriver;
 import edu.ncsu.chord.ChordID;
@@ -115,5 +116,37 @@ public class ObjectServer implements ObjectStore {
 			e.printStackTrace();
 		}
     return true;
+  }
+
+  @Override
+  public boolean verifyKeys(ArrayList<ChordID<InetAddress>> nodeIDList) {
+    boolean result = true;
+    if (node == null) {
+      logger.error("verify Keys is a test method. Must be run with join network option value set to true!");
+      return false;
+    }
+    for (Map.Entry<String, String> e : localStorage.entrySet()) {
+      ChordID<String> key = new ChordID<>(e.getKey());
+      int i;
+      for (i = 0; i < nodeIDList.size(); i++) {
+        if (nodeIDList.get(i).compareTo(key) >= 0)
+          break;
+      }
+      try {
+        if (i == nodeIDList.size())
+          i = 0;
+        if (!nodeIDList.get(i).equals(node.getChordID())) {
+          logger.error("Key: " + e.getKey() + " has chordID " + key +
+                       " It is stored on " + node.getChordID() +
+                       " But should be stored on " + nodeIDList.get(i));
+          result = result & false;
+        }
+        logger.info("Total keys stored on " + node.getChordID() + " : " + localStorage.size());
+      } catch (Exception exception) {
+        exception.printStackTrace();
+      }
+    }
+
+    return result;
   }
 }
