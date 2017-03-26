@@ -92,7 +92,8 @@ public class ObjectServer implements ObjectStore {
 
   boolean put(String key, String value) {
     try {
-      return getObjectStore(key).putObject(new ChordID<String>(key), value);
+      ObjectStore obStore=  getObjectStore(key);
+      return obStore.putObject(new ChordID<String>(key), value);
     } catch (Exception e) {
       e.printStackTrace();
     }
