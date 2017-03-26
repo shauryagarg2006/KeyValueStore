@@ -293,7 +293,7 @@ public class Node implements NodeOperations {
       updateSuccessorListEntry(i);
     }
 
-    logger.info("Successor list for node  " + selfChordID + " " + successorList);
+    logger.debug("Successor list for node  " + selfChordID + " " + successorList);
 
     logger.debug("[Exit] Method:  updateSuccessorList " + "@" + selfChordID +
 		 " Caller: " + "Parameters: ");
@@ -362,8 +362,8 @@ public class Node implements NodeOperations {
       }
     }
 
-    logger.info(fingerTable.toString());
-    logger.info("Predecessor is: " + predecessorChordID);
+    logger.debug(fingerTable.toString());
+    logger.debug("Predecessor is: " + predecessorChordID);
 
     logger.debug("[Exit] Method:  fixFingers " + "@" + selfChordID +
 		 " Caller: " + "Parameters: ");
