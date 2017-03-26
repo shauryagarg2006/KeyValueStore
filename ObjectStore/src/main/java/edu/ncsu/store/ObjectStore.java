@@ -11,6 +11,9 @@ import edu.ncsu.chord.ChordID;
  * Created by amit on 24/3/17.
  */
 public interface ObjectStore extends Remote {
+
+  InetAddress getResponsibleObjectStoreAddress(ChordID<String> key) throws RemoteException;
+
   String getObject(ChordID<String> key) throws RemoteException;
 
   boolean putObject(ChordID<String> key, String value) throws RemoteException;

@@ -65,16 +65,16 @@ public class ObjectServer implements ObjectStore {
   }
 
   private ObjectStore getObjectStore(String key) {
-    if (node == null) {
-      return remoteObjectStore;
+    try {
+      if (node == null) {
+      return StoreRMI.getRemoteObjectStore(remoteObjectStore.getResponsibleObjectStoreAddress(new ChordID<String>(key)));
     } else {
-      try {
         ChordID<String> keyChordID = new ChordID<>(key);
         ChordID<InetAddress> responsibleNode = node.getSuccessor(node.getChordID(), keyChordID);
         return StoreRMI.getRemoteObjectStore(responsibleNode.getKey());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     return null;
   }
@@ -96,6 +96,16 @@ public class ObjectServer implements ObjectStore {
       e.printStackTrace();
     }
     return false;
+  }
+
+  @Override
+  public InetAddress getResponsibleObjectStoreAddress(ChordID<String> key) throws RemoteException {
+    if (node == null) {
+      // This is a client store and doesn't have a node underlying it. It can't respond to this request.
+      return null;
+    } else {
+      return node.getSuccessor(node.getChordID(), key).getKey();
+    }
   }
 
   @Override
