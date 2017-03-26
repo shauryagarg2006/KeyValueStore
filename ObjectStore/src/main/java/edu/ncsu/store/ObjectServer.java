@@ -99,7 +99,7 @@ public class ObjectServer implements ObjectStore {
   @Override
   public boolean putObject(String key, String value) {
     localStorage.put(key, value);
-    logger.debug("Stored Successfully "+key+"--"+value);
+    logger.info("Stored Successfully "+key+"--"+value);
     return true;
   }
 }
