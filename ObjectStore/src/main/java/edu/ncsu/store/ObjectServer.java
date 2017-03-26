@@ -71,6 +71,7 @@ public class ObjectServer implements ObjectStore {
       try {
         ChordID<String> keyChordID = new ChordID<>(key);
         ChordID<InetAddress> responsibleNode = node.getSuccessor(node.getChordID(), keyChordID);
+        logger.info("Key : "+keyChordID+" Responsible Node : "+responsibleNode);
         return StoreRMI.getRemoteObjectStore(responsibleNode.getKey());
       } catch (Exception e) {
         e.printStackTrace();
@@ -111,7 +112,7 @@ public class ObjectServer implements ObjectStore {
   public boolean putObject(ChordID<String> key, String value) {
     localStorage.put(key.getKey(), value);
     	try {
-			logger.info("Stored Successfully at Node-- " + node.getChordID() + "--" + key + "--" + value);
+			logger.info("Key Stored Successfully at Node -- " + node.getChordID() + "--" + key + "--" + value);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
