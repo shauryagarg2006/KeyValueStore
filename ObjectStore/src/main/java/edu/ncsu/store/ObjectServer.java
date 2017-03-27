@@ -37,7 +37,7 @@ public class ObjectServer implements ObjectStore {
       if (joinNetwork) {
         node = joinNetwork(bootstrapNodes);
       } else {
-        for (int i = 0; i < bootstrapNodes.size() && node == null; i++) {
+        for (int i = 0; i < bootstrapNodes.size() && remoteObjectStore == null; i++) {
           remoteObjectStore = StoreRMI.getRemoteObjectStore(bootstrapNodes.get(i));
         }
         if (remoteObjectStore == null) {

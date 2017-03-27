@@ -24,8 +24,8 @@ public class ClientTest {
 			ArrayList<InetAddress> bootstrapNode = new ArrayList<>();
 			// TODO Hard coded BootStrap IP Address
 			bootstrapNode.add(InetAddress.getByName("172.17.0.2"));
-			StoreDriver driver = new StoreDriver(bootstrapNode, true);
-			Thread.sleep(1000*80);
+			StoreDriver driver = new StoreDriver(bootstrapNode, false);
+			//Thread.sleep(1000*80);
 			Map<String, String> values = new HashMap<String, String>();
 			RandomStringGen stringGen = new RandomStringGen();
 			Double average_time = 0D;
