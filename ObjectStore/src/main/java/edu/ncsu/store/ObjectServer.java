@@ -114,6 +114,11 @@ public class ObjectServer implements ObjectStore {
     if (localStorage.containsKey(key)) {
       return localStorage.get(key);
     } else {
+      try {
+        logger.error("Key " + key + " Not found on node " + node.getChordID());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       return null;
     }
   }

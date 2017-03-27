@@ -56,7 +56,8 @@ public class ClientTest {
 		    long after_time = System.currentTimeMillis();
 		    logger.debug("Time Taken to get key : " + (after_time - before_time));
 		    average_time += after_time - before_time;
-		    if (!retrievedValue.equals(e.getValue())) {
+		    if (retrievedValue == null ||
+			!retrievedValue.equals(e.getValue())) {
 		      logger.error("Key: " + e.getKey() + " Actual value: " + e.getValue() + ""
 				   + " Recieved value " + retrievedValue);
 		    }
