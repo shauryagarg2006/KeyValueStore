@@ -55,6 +55,7 @@ public class ChordDriver {
     /* Export this object so that it is available for RMI calls */
     ChordRMI.exportNodeObjectRMI(node);
 
+    logger.info("Node:" + node.getChordID() + "Joining network..");
     node.join(ChordConfig.bootstrapNodes);
 
     /* Fork the stabilize thread */
