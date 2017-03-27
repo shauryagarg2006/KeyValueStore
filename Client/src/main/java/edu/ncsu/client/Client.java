@@ -17,6 +17,7 @@ public class Client {
 				bootstrapNode.add(InetAddress.getByName(args[i]));
 			}
 			StoreDriver driver = new StoreDriver(bootstrapNode, true);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

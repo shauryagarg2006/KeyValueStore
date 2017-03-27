@@ -7,8 +7,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
 import edu.ncsu.chord.ChordDriver;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.Node;
@@ -37,7 +35,7 @@ public class ObjectServer implements ObjectStore {
       if (joinNetwork) {
         node = joinNetwork(bootstrapNodes);
       } else {
-        for (int i = 0; i < bootstrapNodes.size() && node == null; i++) {
+        for (int i = 0; i < bootstrapNodes.size() && remoteObjectStore == null; i++) {
           remoteObjectStore = StoreRMI.getRemoteObjectStore(bootstrapNodes.get(i));
         }
         if (remoteObjectStore == null) {
@@ -67,7 +65,8 @@ public class ObjectServer implements ObjectStore {
   private ObjectStore getObjectStore(String key) {
     try {
       if (node == null) {
-      return StoreRMI.getRemoteObjectStore(remoteObjectStore.getResponsibleObjectStoreAddress(new ChordID<String>(key)));
+      return StoreRMI.getRemoteObjectStore(remoteObjectStore
+                                               .getResponsibleObjectStoreAddress(new ChordID<String>(key)));
     } else {
         ChordID<String> keyChordID = new ChordID<>(key);
         ChordID<InetAddress> responsibleNode = node.getSuccessor(node.getChordID(), keyChordID);
@@ -92,7 +91,7 @@ public class ObjectServer implements ObjectStore {
 
   boolean put(String key, String value) {
     try {
-      ObjectStore obStore=  getObjectStore(key);
+      ObjectStore obStore =  getObjectStore(key);
       return obStore.putObject(new ChordID<String>(key), value);
     } catch (Exception e) {
       e.printStackTrace();
@@ -123,7 +122,7 @@ public class ObjectServer implements ObjectStore {
   public boolean putObject(ChordID<String> key, String value) {
     localStorage.put(key.getKey(), value);
     	try {
-			logger.info("Key Stored Successfully at Node -- " + node.getChordID() + "--" + key + "--" + value);
+			logger.debug("Key Stored Successfully at Node -- " + node.getChordID() + "--" + key + "--" + value);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,12 +153,15 @@ public class ObjectServer implements ObjectStore {
                        " But should be stored on " + nodeIDList.get(i));
           result = result & false;
         }
-        logger.info("Total keys stored on " + node.getChordID() + " : " + localStorage.size());
       } catch (Exception exception) {
         exception.printStackTrace();
       }
     }
-
+    try {
+      logger.info("Total keys stored on " + node.getChordID() + " : " + localStorage.size());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return result;
   }
 }

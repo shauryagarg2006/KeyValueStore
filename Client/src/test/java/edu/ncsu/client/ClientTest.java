@@ -39,13 +39,31 @@ public class ClientTest {
 					long before_time = System.currentTimeMillis();
 					driver.put(key, value);
 					long after_time = System.currentTimeMillis();
-					logger.info("Time Taken to put key : " + (after_time - before_time));
+					logger.debug("Time Taken to put key : " + (after_time
+										   - before_time));
 					average_time += after_time - before_time;
 				}
 			}
-			logger.info("Average Time Taken to put key : " + (average_time / values.size()));
+			logger.info("Average Time Taken to put key : " + (average_time / values.size()) +
+				    " For " + values.size() + " keys");
 			getInetAddressList();
 			driver.verifyKeys(ipList);
+
+		  average_time = 0.0;
+		  for (Map.Entry<String, String> e : values.entrySet()) {
+		    long before_time = System.currentTimeMillis();
+		    String retrievedValue = driver.get(e.getKey());
+		    long after_time = System.currentTimeMillis();
+		    logger.debug("Time Taken to get key : " + (after_time - before_time));
+		    average_time += after_time - before_time;
+		    if (!retrievedValue.equals(e.getValue())) {
+		      logger.error("Key: " + e.getKey() + " Actual value: " + e.getValue() + ""
+				   + " Recieved value " + retrievedValue);
+		    }
+		  }
+		  logger.info("Average Time Taken to get key : " + (average_time / values.size()) +
+			      " For " + values.size() + " keys");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
