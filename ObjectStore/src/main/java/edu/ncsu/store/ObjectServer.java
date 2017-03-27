@@ -112,7 +112,7 @@ public class ObjectServer implements ObjectStore {
   @Override
   public String getObject(ChordID<String> key) {
     if (localStorage.containsKey(key.getKey())) {
-      return localStorage.get(key);
+      return localStorage.get(key.getKey());
     } else {
       try {
         logger.error("Key " + key + " Not found on node " + node.getChordID());
