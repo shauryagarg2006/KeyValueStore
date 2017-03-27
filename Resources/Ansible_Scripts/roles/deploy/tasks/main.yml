@@ -4,6 +4,11 @@
     path: "{{home_path}}/DockerImage" 
     state: directory
 
+- name: Add Env variable for shell scripts
+  lineinfile:
+    dest: "{{home_path}}/.bashrc"
+    line: 'export PATH=$PATH:{{home_path}}/DockerImage/keyvalue/Resources/docker_scripts'
+
 - name: Cloning repository
   git:
     repo: "https://{{UNITY_ID}}:{{GIT_TOKEN}}@{{git_repo}}"
