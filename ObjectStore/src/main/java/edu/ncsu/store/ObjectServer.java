@@ -111,7 +111,7 @@ public class ObjectServer implements ObjectStore {
 
   @Override
   public String getObject(ChordID<String> key) {
-    if (localStorage.containsKey(key)) {
+    if (localStorage.containsKey(key.getKey())) {
       return localStorage.get(key);
     } else {
       try {
