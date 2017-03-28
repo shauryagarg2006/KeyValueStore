@@ -22,6 +22,12 @@
     regexp: "loghost"
     replace: "{{IP_ADDR}}"
 
+- name: Adding Remote logging Url in Client log4j.properties
+  replace:
+    dest: "{{home_path}}/DockerImage/keyvalue/Client/src/main/resources/log4j.properties"
+    regexp: "loghost"
+    replace: "{{IP_ADDR}}"
+
 - name: Adding Remote logging Url in KeyStore log4j.properties
   replace:
     dest: "{{home_path}}/DockerImage/keyvalue/ObjectStore/src/main/resources/log4j.properties"
