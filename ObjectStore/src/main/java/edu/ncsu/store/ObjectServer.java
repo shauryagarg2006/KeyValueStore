@@ -164,6 +164,7 @@ public class ObjectServer implements ObjectStore {
     }
     try {
       logger.info("Total keys stored on " + node.getChordID() + " : " + localStorage.size());
+      System.out.println("Total keys stored on " + node.getChordID() + " : " + localStorage.size());
     } catch (Exception e) {
       e.printStackTrace();
     }

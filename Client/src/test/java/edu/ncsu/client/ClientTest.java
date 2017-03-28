@@ -46,6 +46,10 @@ public class ClientTest {
 			}
 			logger.info("Average Time Taken to put key : " + (average_time / values.size()) +
 				    " For " + values.size() + " keys");
+		  System.out.println("Average Time Taken to put key : " + (average_time / values
+											      .size())
+				     +
+				     " For " + values.size() + " keys");
 			getInetAddressList();
 			driver.verifyKeys(ipList);
 
@@ -63,6 +67,8 @@ public class ClientTest {
 		    }
 		  }
 		  logger.info("Average Time Taken to get key : " + (average_time / values.size()) +
+			      " For " + values.size() + " keys");
+		  System.out.println("Average Time Taken to get key : " + (average_time / values.size()) +
 			      " For " + values.size() + " keys");
 
 		} catch (Exception e) {
