@@ -4,6 +4,11 @@
     path: "{{home_path}}/DockerImage" 
     state: directory
 
+- name: Add Env variable for shell scripts
+  lineinfile:
+    dest: "{{home_path}}/.bashrc"
+    line: 'export PATH=$PATH:{{home_path}}/DockerImage/keyvalue/Resources/docker_scripts'
+
 - name: Cloning repository
   git:
     repo: "https://{{UNITY_ID}}:{{GIT_TOKEN}}@{{git_repo}}"
@@ -11,11 +16,23 @@
     version: "{{GIT_BRANCH}}"
   register: git_clone
 
-#- name: Adding Remote logging Url in log4j.properties
-#  replace:
-#    dest: "{{home_path}}/DockerImage/keyvalue/src/main/resources/log4j.properties"
-#    regexp: "loghost"
-#    replace: "{{IP_ADDR}}"
+- name: Adding Remote logging Url in Chord log4j.properties
+  replace:
+    dest: "{{home_path}}/DockerImage/keyvalue/Chord/src/main/resources/log4j.properties"
+    regexp: "loghost"
+    replace: "{{IP_ADDR}}"
+
+- name: Adding Remote logging Url in Client log4j.properties
+  replace:
+    dest: "{{home_path}}/DockerImage/keyvalue/Client/src/main/resources/log4j.properties"
+    regexp: "loghost"
+    replace: "{{IP_ADDR}}"
+
+- name: Adding Remote logging Url in KeyStore log4j.properties
+  replace:
+    dest: "{{home_path}}/DockerImage/keyvalue/ObjectStore/src/main/resources/log4j.properties"
+    regexp: "loghost"
+    replace: "{{IP_ADDR}}"
 
 - name: Copy Docker DockerFile
   template:

@@ -24,9 +24,9 @@ public class Stabilizer implements Runnable {
   public void run() {
     while (true) {
       try {
-	Thread.sleep(randTime());
+	Thread.sleep(1000);
 	self.stabilize();
-	Thread.sleep(randTime());
+	Thread.sleep(1000);
 	self.fixFingers();
       } catch (Exception e) {
 	e.printStackTrace();

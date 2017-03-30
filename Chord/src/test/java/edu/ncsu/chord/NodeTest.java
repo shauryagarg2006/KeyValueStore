@@ -120,6 +120,7 @@ public class NodeTest {
         sortedNodeInfoList.get(i).sortedListIndex = i;
         sortedNodeInfoList.get(i).idLongValue = Long.parseLong(sortedNodeInfoList.get(i).selfChordID.getValue());
         verifyFingerTable(sortedNodeInfoList.get(i));
+        System.out.println("Finger table for node " + sortedNodeInfoList.get(i).idLongValue + " verified!");
       }
     } catch (RemoteException e) {
       e.printStackTrace();
