@@ -9,21 +9,19 @@ import java.util.ArrayList;
 /**
  * Created by amit on 13/2/17.
  */
-public class Node implements NodeOperations {
+class ChordNode implements ChordOperations {
 
-  /* ChordID of this node */ ChordID<InetAddress> selfChordID;
+  /* ChordID of this node */
+  ChordID<InetAddress> selfChordID;
 
-  /* ChordID of the predecessor node */ ChordID<InetAddress> predecessorChordID = null;
+  /* ChordID of the predecessor node */
+  ChordID<InetAddress> predecessorChordID = null;
 
-  /* IP address of this node */ InetAddress selfIP;
+  /* IP address of this node */
+  InetAddress selfIP;
 
-  /* Finger table of this node */ FingerTable fingerTable;
-
-  /* Is this node a bootstrap node */ boolean isBootStrapNode = false;
-
-  /* A direct RMI object for the bootstrap node used during joining phase
-   abcROR - abcRemoteObjectReference */
-  NodeOperations bootstrapNodeROR = null;
+  /* Finger table of this node */
+  FingerTable fingerTable;
 
   /* A successor list maintained by each node to stabilization protocol*/
   ArrayList<ChordID<InetAddress>> successorList;
@@ -32,35 +30,31 @@ public class Node implements NodeOperations {
   private static final int SUCCESSOR_LIST_MAX_SIZE = ChordConfig.SUCCESSOR_LIST_MAX_SIZE;
 
   /* Keep all loggers transient so that they are not passed over RMI call */
-  private final transient static Logger logger = Logger.getLogger(Node.class);
+  private final transient static Logger logger = Logger.getLogger(ChordNode.class);
 
-  /* this constructor is only used for testing */
-  public Node(InetAddress selfIP) throws RemoteException {
+  /* UpCallHandler for all events that upper layers needs to be notified about */
+  UpcallEventHandler upcallHandler;
+
+  ChordNode(InetAddress selfIP) {
     this.selfIP = selfIP;
     selfChordID = new ChordID<InetAddress>(selfIP);
-    fingerTable = new FingerTable(this);
-    successorList = new ArrayList<ChordID<InetAddress>>();
-  }
-
-  public Node(InetAddress selfIP, boolean isBootStrapNode) throws RemoteException {
-    this(selfIP);
-    this.isBootStrapNode = isBootStrapNode;
+    fingerTable = new FingerTable(selfChordID);
     predecessorChordID = selfChordID;
-    logger.debug(fingerTable.toString());
+    successorList = new ArrayList<ChordID<InetAddress>>();
   }
 
   public String toString() {
     return "[" + selfChordID + "," + selfIP.toString() + "]";
   }
 
-  @Override
-  public InetAddress getIP() throws RemoteException {
-    return selfIP;
+  public void setUpcallHandler(UpcallEventHandler upcallHandler) {
+    this.upcallHandler = upcallHandler;
   }
 
-  @Override
-  public ChordID<InetAddress> getChordID() throws RemoteException {
-    return selfChordID;
+  private void setPredecessorChordID(ChordID<InetAddress> chordID) {
+    this.predecessorChordID = chordID;
+    if (upcallHandler != null)
+      upcallHandler.handleEvent(predecessorChordID);
   }
 
   private void setSuccessor(ChordID<InetAddress> successorChordID) {
@@ -91,7 +85,7 @@ public class Node implements NodeOperations {
     ChordID<InetAddress> successorID = null;
     ChordID<InetAddress> predecessorID = getPredecessor(selfChordID, id);
     logger.debug("Predecessor of " + id + " is found to be " + predecessorID);
-    NodeOperations predecessorROR = ChordRMI.getRemoteNodeObject(predecessorID.getKey());
+    ChordOperations predecessorROR = ChordRMIUtils.getRemoteNodeObject(predecessorID.getKey());
     if (predecessorROR == null) {
       logger.error("Unable to get RMI object for " + predecessorID);
     } else {
@@ -120,10 +114,10 @@ public class Node implements NodeOperations {
 		 " Caller: " + callerID + "Parameters: " + id);
 
     ChordID<InetAddress> predecessor = selfChordID;
-    NodeOperations predecessorROR = ChordRMI.getRemoteNodeObject(selfChordID.getKey());
+    ChordOperations predecessorROR = ChordRMIUtils.getRemoteNodeObject(selfChordID.getKey());
     while (!id.inRange(predecessor, predecessorROR.getSuccessor(selfChordID), false, true)) {
       predecessor = predecessorROR.getClosestPrecedingFinger(selfChordID, id);
-      predecessorROR = ChordRMI.getRemoteNodeObject(predecessor.getKey());
+      predecessorROR = ChordRMIUtils.getRemoteNodeObject(predecessor.getKey());
       if (predecessorROR == null) {
 	logger.error("Unable to get RMI object for " + predecessor);
 	predecessor = null;
@@ -167,13 +161,16 @@ public class Node implements NodeOperations {
    * getSuccessor() method on that node 'm' with lookup id as 'n' to find successor of 'n'. This
    * method will setup the successor node for 'n'.
    */
-  public void join(ArrayList<InetAddress> bootstrapNodes) throws RemoteException {
+  boolean join(ArrayList<InetAddress> bootstrapNodes) throws RemoteException {
     logger.debug("[Entry] Method:  join " + "@" + selfChordID +
 		 " Caller: " + "Parameters: " + bootstrapNodes);
 
+    boolean result = true;
+    ChordOperations bootstrapNodeROR = null;
+
      /* Get RMI reference of bootstrap node */
       for (int i = 0; i < bootstrapNodes.size() && bootstrapNodeROR == null; i++) {
-        bootstrapNodeROR = ChordRMI.getRemoteNodeObject(bootstrapNodes.get(i));
+        bootstrapNodeROR = ChordRMIUtils.getRemoteNodeObject(bootstrapNodes.get(i));
         if (bootstrapNodeROR == null) {
           logger.error("Unable to get RMI object for " + bootstrapNodes.get(i));
         }
@@ -181,14 +178,16 @@ public class Node implements NodeOperations {
 
       if (bootstrapNodeROR == null) {
         logger.error("Could not join the network. Exiting.");
-        System.exit(0);
+        result = false;
+      } else {
+        /* Joining the network for first time. Get successor ID from bootstrap node */
+        setSuccessor(bootstrapNodeROR.getSuccessor(selfChordID));
       }
 
-    /* Joining the network for first time. Get successor ID from bootstrap node */
-      setSuccessor(bootstrapNodeROR.getSuccessor(selfChordID));
-
     logger.debug("[Exit] Method:  join " + "@" + selfChordID +
-		 " Caller: " + "Parameters: " + bootstrapNodeROR.getChordID());
+		 " Caller: " + "Parameters: " + bootstrapNodes);
+
+    return result;
   }
 
   /**
@@ -203,7 +202,7 @@ public class Node implements NodeOperations {
     ChordID<InetAddress> successorChordID = getSuccessor(selfChordID);
       /* Periodically check predecessor of current successor. This will tell if a new node has
       joined in between */
-    NodeOperations successorROR = ChordRMI.getRemoteNodeObject(successorChordID.getKey());
+    ChordOperations successorROR = ChordRMIUtils.getRemoteNodeObject(successorChordID.getKey());
     if (successorROR == null) {
       logger.error("Unable to get RMI object for " + successorChordID
 		   + " will try again in next interval");
@@ -213,7 +212,7 @@ public class Node implements NodeOperations {
       if (predecessorOfSuccessor.inRange(selfChordID, successorChordID, false, false)) {
 	setSuccessor(predecessorOfSuccessor);
       }
-      successorROR = ChordRMI.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
+      successorROR = ChordRMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
       if (successorROR == null) {
 	logger.error("Unable to notify " + getSuccessor(selfChordID)
 		     + " will try again in next interval");
@@ -236,7 +235,7 @@ public class Node implements NodeOperations {
     logger.debug(" Current predecessor is " + predecessorChordID);
     /* If new value is more closer or current predecessor is down => update predecessor */
     if (possiblePredecessor.inRange(predecessorChordID, selfChordID, false, false)) {
-      predecessorChordID = possiblePredecessor;
+      setPredecessorChordID(possiblePredecessor);
     }
     logger.debug(" Updated predecessor is " + predecessorChordID);
 
@@ -251,7 +250,7 @@ public class Node implements NodeOperations {
       return;
     }
 
-    NodeOperations previousEntryROR = ChordRMI.getRemoteNodeObject(successorList.get(index - 1)
+    ChordOperations previousEntryROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(index - 1)
                                                                        .getKey());
     if (previousEntryROR != null) {
       ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
@@ -308,7 +307,7 @@ public class Node implements NodeOperations {
 		 " Caller: " + "Parameters: ");
 
       /* Always re-search for successor of entry 1 in finger table to remove stale entries */
-    NodeOperations successorROR = ChordRMI.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
+    ChordOperations successorROR = ChordRMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
 
     if (successorROR == null) {
 	/* unable to contact with successor mark this successor as failed
@@ -317,7 +316,7 @@ public class Node implements NodeOperations {
       logger.error("Unable to get RMI object for successor!");
       /* Check next available node in successor list */
       for (int i = 1; i < successorList.size(); i++) {
-	successorROR = ChordRMI.getRemoteNodeObject(successorList.get(i).getKey());
+	successorROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(i).getKey());
 	if (successorROR != null) {
 	  setSuccessor(successorList.get(i));
 	  break;
@@ -356,9 +355,9 @@ public class Node implements NodeOperations {
 
 
     /* Also check if your predecessor is still up and running */
-    if (ChordRMI.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
+    if (ChordRMIUtils.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
       synchronized (this) {
-        predecessorChordID = selfChordID;
+        setPredecessorChordID(selfChordID);
       }
     }
 
@@ -367,25 +366,5 @@ public class Node implements NodeOperations {
 
     logger.debug("[Exit] Method:  fixFingers " + "@" + selfChordID +
 		 " Caller: " + "Parameters: ");
-  }
-
-  @Override
-  public String ping() throws RemoteException {
-    return (this.toString() + " is listening..");
-  }
-
-
-  @Override
-  public NodeInfo getNodeInfo(ChordID<InetAddress> callerID) {
-    logger.debug("[Entry] Method:  getNodeInfo " + "@" + selfChordID +
-                 " Caller: " + callerID + "Parameters: ");
-
-    NodeInfo nInfo = new NodeInfo(selfChordID, predecessorChordID,
-                              fingerTable, successorList);
-
-    logger.debug("[Exit] Method:  getNodeInfo " + "@" + selfChordID +
-                 " Caller: " + callerID + "Parameters: ");
-
-    return nInfo;
   }
 }

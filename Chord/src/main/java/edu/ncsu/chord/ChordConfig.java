@@ -18,4 +18,9 @@ class ChordConfig {
   /* ArrayList of IPs of all bootstrap nodes */
   static ArrayList<InetAddress> bootstrapNodes = null;
 
+  /* RMI Registry Port */
+  static int RMI_REGISTRY_PORT = 1099;
+
+  /* Network interface to be used for communication */
+  static String NetworkInterface = "eth0";
 }

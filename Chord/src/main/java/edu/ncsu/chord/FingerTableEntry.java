@@ -7,13 +7,17 @@ import java.net.InetAddress;
  * Created by amit on 10/2/17.
  */
 
-public class FingerTableEntry implements Serializable {
+class FingerTableEntry {
 
-  /* Index number of this entry in the table */ int fingerIndex = -1;
+  /* Index number of this entry in the table */
+  int fingerIndex = -1;
+
   /* The range which this entry covers hashRangeStart is included and hashRangeEnd is excluded */
-  Hash hashRangeStart = null; /* entry ID = 2^i + Node Chord ID */
+  Hash hashRangeStart = null;
   Hash hashRangeEnd = null;
-  /* Successor ID for corresponding entry ID */ ChordID<InetAddress> responsibleNodeID = null;
+
+  /* Successor ID for corresponding entry ID */
+  ChordID<InetAddress> responsibleNodeID = null;
 
   public FingerTableEntry(int fingerIndex, Hash hashRangeStart, Hash hashRangeEnd) {
     this.fingerIndex = fingerIndex;

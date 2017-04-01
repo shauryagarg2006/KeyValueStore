@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 
 /* NodeInfo class should be public in order to accessable via java RMI */
-public class NodeInfo implements Serializable {
+class NodeInfo implements Serializable {
   /* ChordID of this node */
   ChordID<InetAddress> selfChordID;
   /* ChordID of predecessor of this node */

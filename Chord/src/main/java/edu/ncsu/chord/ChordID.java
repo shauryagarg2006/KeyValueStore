@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class ChordID<T> extends SHA256Hash implements Serializable {
 
   /* Each Chord ID must have an associated input key which is hashed to generated the ChordID
-  * This key can be an InetAddress in case of a node or a simple String in case of key of an object */
+  This key can be an InetAddress in case of a node or a simple String in case of key of an object */
   T key = null;
 
   /* Depending on CHORD_ID_MAX_BITS in each ChordID will be calculated. This is also used in finger table */
