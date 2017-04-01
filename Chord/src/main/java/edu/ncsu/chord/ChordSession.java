@@ -68,6 +68,10 @@ public class ChordSession {
     node.setUpcallHandler(handler);
   }
 
+  public ChordID<InetAddress> getChordNodeID() {
+    return node.selfChordID;
+  }
+
   private static InetAddress getMyEthernetIP() {
     Inet4Address ipv4 = null;
     Inet6Address ipv6 = null;

@@ -16,7 +16,16 @@ class ChordConfig {
   static int SUCCESSOR_LIST_MAX_SIZE = 3;
 
   /* ArrayList of IPs of all bootstrap nodes */
-  static ArrayList<InetAddress> bootstrapNodes = null;
+  static ArrayList<InetAddress> bootstrapNodes;
+
+  static {
+    bootstrapNodes = new ArrayList<>();
+    try {
+      bootstrapNodes.add(InetAddress.getByName("172.17.0.2"));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   /* RMI Registry Port */
   static int RMI_REGISTRY_PORT = 1099;
