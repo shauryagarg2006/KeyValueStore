@@ -21,7 +21,10 @@ class ChordRMIUtils {
     Registry registry = null;
 
     try {
-      registry = LocateRegistry.getRegistry();
+      registry = LocateRegistry.getRegistry(ChordConfig.RMI_REGISTRY_PORT);
+      // this is simply used to print all registry entries if registry already exits
+      // otherwise this will throw excption and we can create new registry.
+      registry.list();
     } catch (RemoteException e) {
       try {
         registry = LocateRegistry.createRegistry(ChordConfig.RMI_REGISTRY_PORT);
