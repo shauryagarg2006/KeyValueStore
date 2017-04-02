@@ -22,9 +22,11 @@ public class StoreRMIUtils {
     Registry registry = null;
 
     try {
+    	logger.debug("Trying to locate existing RMI Registery on default port");
       registry = LocateRegistry.getRegistry();
     } catch (RemoteException e) {
       try {
+    	logger.debug("Trying to create new RMI Registery on port : " + StoreConfig.RMI_REGISTRY_PORT);
         registry = LocateRegistry.createRegistry(StoreConfig.RMI_REGISTRY_PORT);
       } catch (RemoteException nestedException) {
         nestedException.printStackTrace();
@@ -53,7 +55,7 @@ public class StoreRMIUtils {
   static boolean exportClientAPIRMI(StoreClientAPIImpl apiImpl) {
     Registry registry = getRegistry();
     try {
-      StoreClientAPIImpl api = (StoreClientAPIImpl) UnicastRemoteObject.exportObject(apiImpl, 0);
+    	StoreClientAPI api = (StoreClientAPI) UnicastRemoteObject.exportObject(apiImpl, 0);
       registry.rebind("Client", api);
       String entries[] = registry.list();
       logger.debug("Registry entries:");
