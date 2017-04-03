@@ -3,7 +3,7 @@
   hosts: keyvalue
   become: yes
   vars:
-    home_path: /home/{{UNITY_ID}}
+    home_path: /home/{{ansible_user}}
   roles:
     - docker
     - deploy

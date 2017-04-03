@@ -1,1 +1,1 @@
-killall java
+sudo killall java
