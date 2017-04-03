@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import edu.ncsu.store.StoreClientAPI;
+
 /**
  * Created by amit on 24/3/17.
  */
@@ -17,7 +19,7 @@ public class Client {
 		RandomStringGen stringGen = new RandomStringGen();
 		Double average_time = 0D;
 		try {
-			for (int iter = 0; iter <= 10; iter++) {
+			for (int iter = 0; iter <= 1020; iter++) {
 				String key = stringGen.nextString();
 				String value = stringGen.nextString();
 				if (values.containsKey(key)) {
@@ -31,9 +33,9 @@ public class Client {
 					average_time += after_time - before_time;
 				}
 			}
-			logger.info("Average Time Taken to put key : " + (average_time / values.size()) + " For " + values.size()
+			logger.info("Average Time Taken to put key : " + (average_time / values.size()) +" ms" + " For " + values.size()
 					+ " keys");
-			System.out.println("Average Time Taken to put key : " + (average_time / values.size()) + " For "
+			System.out.println("Average Time Taken to put key : " + (average_time / values.size()) +" ms"+ " For "
 					+ values.size() + " keys");
 			average_time = 0.0;
 			for (Map.Entry<String, String> e : values.entrySet()) {
@@ -47,9 +49,9 @@ public class Client {
 							+ retrievedValue);
 				}
 			}
-			logger.info("Average Time Taken to get key : " + (average_time / values.size()) + " For " + values.size()
+			logger.info("Average Time Taken to get key : " + (average_time / values.size()) +" ms"+ " For " + values.size()
 					+ " keys");
-			System.out.println("Average Time Taken to get key : " + (average_time / values.size()) + " For "
+			System.out.println("Average Time Taken to get key : " + (average_time / values.size()) +" ms"+ " For "
 					+ values.size() + " keys");
 		} catch (Exception e) {
 			e.printStackTrace();

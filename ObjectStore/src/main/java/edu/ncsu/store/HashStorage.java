@@ -1,8 +1,8 @@
 package edu.ncsu.store;
 
-import org.apache.log4j.Logger;
-
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -15,6 +15,9 @@ public class HashStorage implements LocalStorage {
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(HashStorage.class);
 
+  public HashStorage() {
+	storage = new HashMap<String, byte[]>();
+}
   @Override
   public byte[] get(String key) {
     return storage.get(key);

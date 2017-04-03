@@ -2,6 +2,8 @@ package edu.ncsu.client;
 
 import org.apache.log4j.Logger;
 
+import edu.ncsu.store.StoreClientAPI;
+
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
