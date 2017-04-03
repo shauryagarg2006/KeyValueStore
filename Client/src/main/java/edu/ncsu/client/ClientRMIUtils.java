@@ -21,6 +21,7 @@ public class ClientRMIUtils {
 
     try {
       registry = LocateRegistry.getRegistry();
+      registry.list();
     } catch (RemoteException e) {
       try {
         registry = LocateRegistry.createRegistry(ClientConfig.RMI_REGISTRY_PORT);
