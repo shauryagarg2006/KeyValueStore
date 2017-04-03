@@ -31,9 +31,9 @@
   ignore_errors: yes
   register: docker_install
 
-- name: Add {{UNITY_ID}} to docker group
+- name: Add {{ansible_user}} to docker group
   user:
-    name: "{{UNITY_ID}}"
+    name: "{{ansible_user}}"
     groups: docker
     append: yes
   register: docker_install
