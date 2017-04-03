@@ -22,11 +22,10 @@ public class StoreRMIUtils {
     Registry registry = null;
 
     try {
-    	logger.debug("Trying to locate existing RMI Registery on default port");
       registry = LocateRegistry.getRegistry();
+      registry.list();
     } catch (RemoteException e) {
       try {
-    	logger.debug("Trying to create new RMI Registery on port : " + StoreConfig.RMI_REGISTRY_PORT);
         registry = LocateRegistry.createRegistry(StoreConfig.RMI_REGISTRY_PORT);
       } catch (RemoteException nestedException) {
         nestedException.printStackTrace();
