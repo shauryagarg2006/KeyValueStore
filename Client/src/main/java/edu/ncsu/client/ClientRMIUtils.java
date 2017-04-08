@@ -1,14 +1,13 @@
 package edu.ncsu.client;
 
 import org.apache.log4j.Logger;
-
 import java.net.InetAddress;
+import edu.ncsu.store.StoreClientAPI;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import edu.ncsu.store.StoreClientAPI;
 
 
 /**
