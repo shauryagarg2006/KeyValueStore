@@ -1,9 +1,11 @@
 package edu.ncsu.store;
 
+import java.util.Set;
+
 /**
  * Created by amit on 1/4/17.
  */
-public interface LocalStorage {
+interface LocalStorage {
   byte[] get(String key);
 
   boolean containsKey(String key);
@@ -11,6 +13,8 @@ public interface LocalStorage {
   void put(String key, byte[] value) throws Exception;
 
   void delete(String key);
+
+  Set<String> keySet();
 
   int size();
 }

@@ -2,10 +2,13 @@ package edu.ncsu.client;
 
 import org.apache.log4j.Logger;
 
+import java.net.InetAddress;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
+import edu.ncsu.store.StoreClientAPI;
 
 
 /**
@@ -33,16 +36,14 @@ public class ClientRMIUtils {
     return registry;
   }
 
-
-
-  static StoreClientAPI getRemoteClient() {
+  private static StoreClientAPI _getRemoteClient(String ip) {
     /* INetAddress toString adds a '/' at the beginning remove that */
-    String serverURL = "rmi://" + ClientConfig.bootStrapIP + "/Client";
+    String serverURL = "rmi://" + ip + "/Client";
     StoreClientAPI api = null;
     try {
       api = (StoreClientAPI) Naming.lookup(serverURL);
       if (api == null) {
-	throw new RemoteException();
+        throw new RemoteException();
       }
     } catch (Exception e) {
       /* TODO: Need to do all RMI exception handling
@@ -53,14 +54,23 @@ public class ClientRMIUtils {
       logger.error("Unable to get Remote object for " + ClientConfig.bootStrapIP + " Trying one more time...");
       /* Try one more time before giving up */
       try {
-	api = (StoreClientAPI) Naming.lookup(serverURL);
+        api = (StoreClientAPI) Naming.lookup(serverURL);
       } catch (Exception nestedException) {
-	nestedException.printStackTrace();
-	api = null;
+        nestedException.printStackTrace();
+        api = null;
       }
       e.printStackTrace();
     }
     return api;
+
+  }
+
+  static StoreClientAPI getRemoteClient(InetAddress inetAddress) {
+    return _getRemoteClient(inetAddress.toString().substring(1));
+  }
+
+  static StoreClientAPI getRemoteClient() {
+    return _getRemoteClient(ClientConfig.bootStrapIP);
   }
 
 }

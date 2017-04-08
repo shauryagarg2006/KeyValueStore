@@ -9,8 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
-
-import edu.ncsu.chord.ChordDriver;
+import java.util.Set;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.ChordSession;
 
@@ -19,14 +18,9 @@ import edu.ncsu.chord.ChordSession;
  */
 public class StoreClientAPIImpl implements StoreClientAPI {
 
-  ChordSession session;
-
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(StoreClientAPIImpl.class);
 
-  StoreClientAPIImpl(ChordSession session) {
-    this.session = session;
-  }
 
   private static byte[] serialize(Object obj) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -44,6 +38,7 @@ public class StoreClientAPIImpl implements StoreClientAPI {
 
   @Override
   public Object get(String key) throws RemoteException {
+    ChordSession session = ObjectStoreService.getChordSession();
     ChordID<String> chordKey = new ChordID<>(key);
     ChordID<InetAddress> responsibleNodeID = session.getResponsibleNodeID(chordKey);
     ObjectStoreOperations responsibleStore = StoreRMIUtils.getRemoteObjectStore(responsibleNodeID.getKey());
@@ -63,6 +58,7 @@ public class StoreClientAPIImpl implements StoreClientAPI {
 
   @Override
   public void put(String key, Object value) throws RemoteException {
+    ChordSession session = ObjectStoreService.getChordSession();
     ChordID<String> chordKey = new ChordID<>(key);
     ChordID<InetAddress> responsibleNodeID = session.getResponsibleNodeID(chordKey);
     ObjectStoreOperations responsibleStore = StoreRMIUtils.getRemoteObjectStore(responsibleNodeID.getKey());
@@ -78,6 +74,11 @@ public class StoreClientAPIImpl implements StoreClientAPI {
   @Override
   public void delete(String key) throws RemoteException {
 
+  }
+
+  @Override
+  public Set<String> keySet() throws RemoteException {
+    return ObjectStoreService.getStore().keySet();
   }
 
 }

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import edu.ncsu.chord.ChordDriver;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.ChordOperations;
@@ -16,9 +18,9 @@ import edu.ncsu.chord.ChordSession;
 /**
  * Created by amit on 24/3/17.
  */
-public class ObjectStore implements ObjectStoreOperations {
+class ObjectStore implements ObjectStoreOperations {
 
-  LocalStorage localStorage;
+  private LocalStorage localStorage;
 
 
   /* Keep all loggers transient so that they are not passed over RMI call */
@@ -69,6 +71,11 @@ public class ObjectStore implements ObjectStoreOperations {
       delete(k);
     }
     return true;
+  }
+
+  /* this method is written only for testing purposes */
+  public Set<String> keySet() {
+    return localStorage.keySet();
   }
 
 }

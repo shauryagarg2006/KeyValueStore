@@ -15,11 +15,12 @@ public class ChordDriver {
  /* Reference to singleton Session object */
  private static ChordSession session = null;
 
-  public static ChordSession getSession() {
+  public synchronized static ChordSession getSession() {
     if (session == null) {
       session = new ChordSession();
     }
     return session;
   }
+
 
 }

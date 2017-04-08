@@ -13,7 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by amit on 24/3/17.
  */
-public class StoreRMIUtils {
+class StoreRMIUtils {
 
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(StoreRMIUtils.class);

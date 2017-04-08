@@ -3,14 +3,15 @@ package edu.ncsu.store;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 /**
  * Created by amit on 1/4/17.
  */
-public class HashStorage implements LocalStorage {
+class HashStorage implements LocalStorage {
 
-  HashMap<String, byte[]> storage;
+  private HashMap<String, byte[]> storage;
 
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(HashStorage.class);
@@ -28,6 +29,11 @@ public class HashStorage implements LocalStorage {
   @Override
   public void delete(String key) {
     storage.remove(key);
+  }
+
+  @Override
+  public Set<String> keySet() {
+    return storage.keySet();
   }
 
   @Override
