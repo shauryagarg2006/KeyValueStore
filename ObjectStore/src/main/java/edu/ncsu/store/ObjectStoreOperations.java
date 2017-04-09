@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import edu.ncsu.chord.ChordID;
 
@@ -17,7 +18,7 @@ public interface ObjectStoreOperations extends Remote {
 
   boolean putObject(ChordID<String> key, byte[] value) throws RemoteException;
 
-  boolean putObjects(HashMap<ChordID<String>, byte[]> keyValueMap) throws RemoteException;
+  boolean putObjects(Map<ChordID<String>, byte[]> keyValueMap) throws RemoteException;
 
   boolean delete(ChordID<String> key) throws RemoteException;
 

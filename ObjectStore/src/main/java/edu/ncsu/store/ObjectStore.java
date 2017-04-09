@@ -52,11 +52,12 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean putObjects(HashMap<ChordID<String>, byte[]> keyValueMap) throws RemoteException {
+  public boolean putObjects(Map<ChordID<String>, byte[]> keyValueMap) throws RemoteException {
     boolean result = true;
     for (Map.Entry<ChordID<String>, byte[]> e : keyValueMap.entrySet()) {
       result &= putObject(e.getKey(), e.getValue());
     }
+    logger.info("Accepted " + keyValueMap.size() + " new keys");
     return result;
   }
 
