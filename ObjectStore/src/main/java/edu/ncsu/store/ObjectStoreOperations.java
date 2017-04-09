@@ -3,6 +3,7 @@ package edu.ncsu.store;
 import java.net.InetAddress;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,6 +23,6 @@ public interface ObjectStoreOperations extends Remote {
 
   boolean delete(ChordID<String> key) throws RemoteException;
 
-  boolean deleteKeys(HashSet<ChordID<String>> key) throws RemoteException;
+  boolean deleteKeys(ArrayList<ChordID<String>> key) throws RemoteException;
 
 }

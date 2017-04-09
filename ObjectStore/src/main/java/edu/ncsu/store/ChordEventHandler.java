@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import edu.ncsu.chord.ChordID;
@@ -47,6 +48,9 @@ public class ChordEventHandler implements UpcallEventHandler {
     ObjectStoreOperations predecessorStore = StoreRMIUtils.getRemoteObjectStore(newPredecessor.getKey());
     try {
       predecessorStore.putObjects(misplacedObjects);
+      // If above operation did not throw an exception
+      // only then delete those keys from your storage
+      store.deleteKeys(new ArrayList<>(misplacedObjects.keySet()));
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -68,7 +68,7 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean deleteKeys(HashSet<ChordID<String>> key) throws RemoteException {
+  public boolean deleteKeys(ArrayList<ChordID<String>> key) throws RemoteException {
     for (ChordID<String> k : key) {
       delete(k);
     }

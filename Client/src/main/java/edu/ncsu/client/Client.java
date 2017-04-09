@@ -48,7 +48,7 @@ public class Client {
 	long before_time = System.currentTimeMillis();
 	String retrievedValue = (String) handle.get(e.getKey());
 	long after_time = System.currentTimeMillis();
-	logger.debug("Time Taken to get key : " + (after_time - before_time));
+	//logger.debug("Time Taken to get key : " + (after_time - before_time));
 	average_time += after_time - before_time;
 	if (retrievedValue == null || !retrievedValue.equals(e.getValue())) {
 	  logger.error("Key: " + e.getKey() + " Actual value: " + e.getValue() + ""
