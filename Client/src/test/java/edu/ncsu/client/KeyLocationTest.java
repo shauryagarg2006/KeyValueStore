@@ -3,7 +3,9 @@ package edu.ncsu.client;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -29,6 +31,7 @@ public class KeyLocationTest {
     /* list of IP addresses of all nodes */
     ArrayList<InetAddress> ipList;
 
+
     @Test
     public void testKeyLocations() {
       /* Ask each node to dump its keySet and then verify that key set against Node list */
@@ -47,8 +50,9 @@ public class KeyLocationTest {
           prevNodeID = (i == 0) ? sortedNodeIdList.get(sortedNodeIdList.size() - 1) : sortedNodeIdList.get(i - 1);
           for (String s : keys) {
             ChordID<String> chordKey = new ChordID<>(s);
-            Assert.assertTrue("Key: " + chordKey + " present on node " + currNodeID,
-                              chordKey.inRange(prevNodeID, currNodeID, false, true));
+            if (!chordKey.inRange(prevNodeID, currNodeID, false, true)) {
+              logger.error("Key: " + chordKey + " present on node " + currNodeID);
+            }
           }
         } catch (RemoteException e) {
           e.printStackTrace();
