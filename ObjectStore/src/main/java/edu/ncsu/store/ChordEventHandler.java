@@ -22,7 +22,8 @@ public class ChordEventHandler implements UpcallEventHandler {
 
   @Override
   public void handleEvent(ChordID<InetAddress> newPredecessor) {
-    logger.info("Handler called. New predecessor is: " + newPredecessor);
+    logger.info("Handler called in " +  ObjectStoreService.getChordSession().getChordNodeID()
+                + " New predecessor is: " + newPredecessor);
 
     /* Go through all keys of localStorage and see if we have any keys that needs to be
     moved to this new predecessor.*/
@@ -43,7 +44,8 @@ public class ChordEventHandler implements UpcallEventHandler {
       }
     }
     logger.info("Number of keys that needs to moved: " + misplacedObjects.size());
-
+    // TODO: remove below log statement after debugging is done
+    logger.info("About to move below keys: " + new ArrayList<>(misplacedObjects.keySet()));
     // Start key movement. First get remote object for predecessor object store
     ObjectStoreOperations predecessorStore = StoreRMIUtils.getRemoteObjectStore(newPredecessor.getKey());
     try {
