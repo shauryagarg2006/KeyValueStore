@@ -34,7 +34,18 @@ class FingerTable {
   public FingerTableEntry getEntry(int index) {
     return table.get(index);
   }
-
+  public String toSimpleString() {
+	    StringBuilder tableData = new StringBuilder();
+	    for (int i = 0; i < table.size(); i++) {
+			if (i == table.size() - 1) {
+				tableData.append(table.get(i).toSimpleString());
+			} else {
+				tableData.append(table.get(i).toSimpleString() + "\n");
+			}
+	    }
+	    return tableData.toString();
+	  }
+  
   public String toString() {
     StringBuilder tableData = new StringBuilder();
     for (int i = 0; i < table.size(); i++) {

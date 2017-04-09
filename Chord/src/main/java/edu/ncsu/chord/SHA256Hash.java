@@ -1,11 +1,11 @@
 package edu.ncsu.chord;
 
-import org.apache.log4j.Logger;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Arrays;
+
+import org.apache.log4j.Logger;
 
 /**
  * Created by amit on 14/2/17. The class for providing function on Hash value.

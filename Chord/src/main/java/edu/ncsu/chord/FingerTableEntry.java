@@ -31,7 +31,12 @@ class FingerTableEntry {
     this(fingerIndex, hashRangeStart, hashRangeEnd);
     this.responsibleNodeID = responsibleNodeID;
   }
-
+  
+  public String toSimpleString() {
+	return fingerIndex + "$" + hashRangeStart + "$" + hashRangeEnd + "$" + responsibleNodeID.key + "$"
+				+ responsibleNodeID.getValue();
+  }
+  
   public String toString() {
     return "[" + fingerIndex + ", " + "(" + hashRangeStart + "," + hashRangeEnd + ")" +
 	   ", " + responsibleNodeID + "]";

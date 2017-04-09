@@ -1,9 +1,12 @@
 package edu.ncsu.chord;
 
-import org.apache.log4j.Logger;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
+
+import com.google.gson.Gson;
 
 
 /**
@@ -31,7 +34,8 @@ class ChordNode implements ChordOperations {
 
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(ChordNode.class);
-
+  private final transient static Logger analysisLogger = Logger.getLogger("analysis");
+  
   /* UpCallHandler for all events that upper layers needs to be notified about */
   UpcallEventHandler upcallHandler;
 
@@ -164,7 +168,7 @@ class ChordNode implements ChordOperations {
   boolean join(ArrayList<InetAddress> bootstrapNodes) throws RemoteException {
     logger.debug("[Entry] Method:  join " + "@" + selfChordID +
 		 " Caller: " + "Parameters: " + bootstrapNodes);
-
+    analysisLogger.info("%JOIN%"+selfChordID.getKey()+"%"+selfChordID.getValue());
     boolean result = true;
     ChordOperations bootstrapNodeROR = null;
 
@@ -367,4 +371,11 @@ class ChordNode implements ChordOperations {
     logger.debug("[Exit] Method:  fixFingers " + "@" + selfChordID +
 		 " Caller: " + "Parameters: ");
   }
+  
+  public void printNode() {
+	  //analysisLogger.info("\n"+selfChordID.getKey()+"$"+selfChordID.getValue()+"\n"+fingerTable.toSimpleString());
+	  Gson gson = new Gson();
+	  analysisLogger.info("JSON-PAYLOAD-START\n"+gson.toJson(this)+"\nJSON-PAYLOAD-END");
+  }
+  
 }

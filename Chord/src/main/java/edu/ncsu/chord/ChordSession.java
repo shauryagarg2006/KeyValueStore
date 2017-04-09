@@ -46,6 +46,7 @@ public class ChordSession {
       try {
 	node.stabilize();
 	node.fixFingers();
+	node.printNode();
       } catch (RemoteException e) {
 	e.printStackTrace();
       }
