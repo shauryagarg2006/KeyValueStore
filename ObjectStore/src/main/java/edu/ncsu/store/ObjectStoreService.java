@@ -28,7 +28,7 @@ class ObjectStoreService {
     chordSession.join();
 
     /* Create object store object and export it for RMI */
-    ObjectStore store = new ObjectStore();
+    store = new ObjectStore();
     StoreRMIUtils.exportStoreObjectRMI(store);
 
     /* create client API object and export it for RMI */
