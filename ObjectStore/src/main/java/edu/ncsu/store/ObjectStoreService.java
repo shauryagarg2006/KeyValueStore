@@ -25,7 +25,9 @@ class ObjectStoreService {
   private static void start() {
     /* First start chord node and join network */
     chordSession = ChordDriver.getSession();
+    chordSession.registerUpcall(new ChordEventHandler());
     chordSession.join();
+
 
     /* Create object store object and export it for RMI */
     store = new ObjectStore();

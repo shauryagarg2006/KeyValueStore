@@ -24,7 +24,7 @@ public class Client {
     RandomStringGen stringGen = new RandomStringGen();
     Double average_time = 0D;
     try {
-      for (int iter = 0; iter <= 10; iter++) {
+      for (int iter = 0; iter <= 1000; iter++) {
 	String key = stringGen.nextString();
 	String value = stringGen.nextString();
 	if (values.containsKey(key)) {
@@ -34,7 +34,7 @@ public class Client {
 	  long before_time = System.currentTimeMillis();
 	  handle.put(key, value);
 	  long after_time = System.currentTimeMillis();
-	  logger.debug("Time Taken to put key : " + (after_time - before_time));
+	  //logger.debug("Time Taken to put key : " + (after_time - before_time));
 	  average_time += after_time - before_time;
 	}
       }
