@@ -103,7 +103,7 @@ public class SHA256Hash implements Hash, Serializable {
     SHA256Hash start = new SHA256Hash(((SHA256Hash) rangeStart).hashValue, MAX_BITS);
     SHA256Hash end = new SHA256Hash(((SHA256Hash) rangeEnd).hashValue, MAX_BITS);
 
-    /* If start =x and end = x + 1and startinclusive is false & endInclusive is false
+    /* If start = x and end = x + 1 and startInclusive is false & endInclusive is false
      * then nothing can be inRange of this interval */
     if (start.hashValue + 1 == end.hashValue && !startInclusive && !endInclusive) {
       return false;
