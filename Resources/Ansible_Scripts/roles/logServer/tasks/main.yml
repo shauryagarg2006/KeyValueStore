@@ -22,6 +22,13 @@
     dest: "{{home_path}}/log_server/log4j.KeyStore.properties"
     mode: 0700
 
+- name: Copy Analysis log4j Server Properties
+  template:
+    force: yes
+    src: "templates/log4j.Analysis.properties"
+    dest: "{{home_path}}/log_server/log4j.Analysis.properties"
+    mode: 0700
+
 - name: Check If log Servers are running
   shell: ps -ax
   register: log_server
@@ -41,3 +48,11 @@
   args:
    chdir: "{{home_path}}/log_server/"
   when: "log_server.stdout.find('log4j.KeyStore.properties') == -1"
+
+- name: Start Analysis logging server
+  shell: "{{ item }}"
+  with_items:
+    - nohup java -classpath log4j.jar org.apache.log4j.net.SimpleSocketServer 4713 log4j.Analysis.properties </dev/null >/dev/null 2>&1 &
+  args:
+   chdir: "{{home_path}}/log_server/"
+  when: "log_server.stdout.find('log4j.Analysis.properties') == -1"
