@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # generate a list of IP addresses of all containers
 sudo python ~/DockerImage/keyvalue/Resources/docker_scripts/FetchIPAddress.py
 
