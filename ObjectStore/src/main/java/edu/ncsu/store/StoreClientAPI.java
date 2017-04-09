@@ -2,6 +2,7 @@ package edu.ncsu.store;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -15,5 +16,5 @@ public interface StoreClientAPI extends Remote {
 
   void delete(String key) throws RemoteException;
 
-  Set<String> keySet() throws RemoteException;
+  ArrayList<String> keySet() throws RemoteException;
 }

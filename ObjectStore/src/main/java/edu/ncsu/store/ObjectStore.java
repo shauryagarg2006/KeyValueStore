@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -74,8 +75,8 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   /* this method is written only for testing purposes */
-  public Set<String> keySet() {
-    return localStorage.keySet();
+  public ArrayList<String> keySet() {
+    return new ArrayList<String>(localStorage.keySet());
   }
 
 }

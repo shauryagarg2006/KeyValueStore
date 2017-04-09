@@ -41,7 +41,7 @@ public class KeyLocationTest {
         logger.debug("Checking keys for node " + currNodeID);
 	/* Get Client for this node */
         StoreClientAPI clientAPI = ClientRMIUtils.getRemoteClient(currNodeID.getKey());
-        Set<String> keys = null;
+        ArrayList<String> keys = null;
         try {
           keys = clientAPI.keySet();
           prevNodeID = (i == 0) ? sortedNodeIdList.get(sortedNodeIdList.size() - 1) : sortedNodeIdList.get(i - 1);

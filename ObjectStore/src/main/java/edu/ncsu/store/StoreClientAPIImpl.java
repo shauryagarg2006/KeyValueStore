@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Set;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.ChordSession;
@@ -77,7 +78,7 @@ public class StoreClientAPIImpl implements StoreClientAPI {
   }
 
   @Override
-  public Set<String> keySet() throws RemoteException {
+  public ArrayList<String> keySet() throws RemoteException {
     return ObjectStoreService.getStore().keySet();
   }
 
