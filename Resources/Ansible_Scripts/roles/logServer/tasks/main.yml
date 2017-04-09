@@ -52,7 +52,7 @@
 - name: Start Analysis logging server
   shell: "{{ item }}"
   with_items:
-    - nohup java -classpath log4j.jar org.apache.log4j.net.SimpleSocketServer 4713 log4j.Analysis.properties </dev/null >/dev/null 2>&1 &
+    - nohup java -classpath log4j.jar org.apache.log4j.net.SimpleSocketServer 4714 log4j.Analysis.properties </dev/null >/dev/null 2>&1 &
   args:
    chdir: "{{home_path}}/log_server/"
   when: "log_server.stdout.find('log4j.Analysis.properties') == -1"
