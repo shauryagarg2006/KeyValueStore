@@ -1,6 +1,7 @@
 package edu.ncsu.client;
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,11 +32,13 @@ public class KeyLocationTest {
     @Test
     public void testKeyLocations() {
       /* Ask each node to dump its keySet and then verify that key set against Node list */
-
+      logger.debug("in method testKeyLocations..");
       /* Each node loop */
       for (int i = 0; i < sortedNodeIdList.size(); i++) {
         ChordID<InetAddress> prevNodeID = null;
         ChordID<InetAddress> currNodeID = sortedNodeIdList.get(i);
+
+        logger.debug("Checking keys for node " + currNodeID);
 	/* Get Client for this node */
         StoreClientAPI clientAPI = ClientRMIUtils.getRemoteClient(currNodeID.getKey());
         Set<String> keys = null;
@@ -44,9 +47,8 @@ public class KeyLocationTest {
           prevNodeID = (i == 0) ? sortedNodeIdList.get(sortedNodeIdList.size() - 1) : sortedNodeIdList.get(i - 1);
           for (String s : keys) {
             ChordID<String> chordKey = new ChordID<>(s);
-            if (!chordKey.inRange(prevNodeID, currNodeID, false, true)) {
-              logger.error("Key: " + chordKey + " Should not be present on node " + currNodeID);
-            }
+            Assert.assertTrue("Key: " + chordKey + " present on node " + currNodeID,
+                              chordKey.inRange(prevNodeID, currNodeID, false, true));
           }
         } catch (RemoteException e) {
           e.printStackTrace();
