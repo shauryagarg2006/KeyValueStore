@@ -375,7 +375,7 @@ class ChordNode implements ChordOperations {
   public void printNode() {
 	  //analysisLogger.info("\n"+selfChordID.getKey()+"$"+selfChordID.getValue()+"\n"+fingerTable.toSimpleString());
 	  Gson gson = new Gson();
-	  analysisLogger.info("JSON-PAYLOAD-START\n"+gson.toJson(this)+"\nJSON-PAYLOAD-END");
+	  analysisLogger.info("JSON-PAYLOAD\n"+gson.toJson(this));
   }
   
 }
