@@ -33,7 +33,8 @@ public class ChordEventHandler implements UpcallEventHandler {
     Map<ChordID<String>, byte[]> misplacedObjects = new HashMap();
     for (String key : allKeys) {
       ChordID<String> chordKey = new ChordID<>(key);
-      if (newPredecessor.inRange(chordKey, selfChordID, true, false)) {
+      if (chordKey.compareTo(selfChordID) < 0 &&
+          newPredecessor.inRange(chordKey, selfChordID, true, false)) {
         // This key ID is less than new predecessor ID.
         // This key needs to be moved to new predecessor.
         try {
