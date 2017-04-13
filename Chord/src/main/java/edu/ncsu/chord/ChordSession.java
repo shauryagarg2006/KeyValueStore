@@ -65,6 +65,16 @@ public class ChordSession {
     return responsibleNodeID;
   }
 
+  public ChordID<InetAddress> getSelfSuccessor() {
+    ChordID<InetAddress> successor = null;
+    try {
+      successor = node.getSuccessor(node.selfChordID);
+    } catch (RemoteException e) {
+      e.printStackTrace();
+    }
+    return successor;
+  }
+
   public void registerUpcall(UpcallEventHandler handler) {
     node.setUpcallHandler(handler);
   }

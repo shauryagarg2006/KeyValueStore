@@ -43,6 +43,7 @@ class ObjectStore implements ObjectStoreOperations {
   @Override
   public boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException {
     try {
+      makeReplicas(key.getKey(), value);
       localStorage.put(key.getKey(), value);
     } catch (Exception e) {
       e.printStackTrace();
@@ -76,8 +77,23 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean replicate(String key, DataContainer value) throws RemoteException {
+  public boolean makeReplicas(String key, DataContainer value) throws RemoteException {
+    if (value.replicaNumber > 0) {
+      ChordID<InetAddress> successorChordID = ObjectStoreService.getChordSession().getSelfSuccessor();
+      ObjectStoreOperations successorStore = StoreRMIUtils.getRemoteObjectStore(successorChordID.getKey());
+      successorStore.makeReplicas(key, new DataContainer(value.value, value.replicaNumber - 1));
+    }
+    try {
+      localStorage.put(key, value);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+  }
 
+  @Override
+  public boolean removeReplicas(String key, DataContainer value) throws RemoteException {
     return false;
   }
 

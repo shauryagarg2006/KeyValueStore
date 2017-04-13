@@ -25,5 +25,7 @@ public interface ObjectStoreOperations extends Remote {
 
   boolean deleteKeys(ArrayList<ChordID<String>> key) throws RemoteException;
 
-  boolean replicate(String key, DataContainer value) throws RemoteException;
+  boolean makeReplicas(String key, DataContainer value) throws RemoteException;
+
+  boolean removeReplicas(String key, DataContainer value) throws RemoteException;
 }
