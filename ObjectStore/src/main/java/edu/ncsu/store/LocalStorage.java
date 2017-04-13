@@ -6,11 +6,11 @@ import java.util.Set;
  * Created by amit on 1/4/17.
  */
 interface LocalStorage {
-  byte[] get(String key);
+  DataContainer get(String key);
 
   boolean containsKey(String key);
 
-  void put(String key, byte[] value) throws Exception;
+  void put(String key, DataContainer value) throws Exception;
 
   void delete(String key);
 

@@ -30,7 +30,7 @@ public class ChordEventHandler implements UpcallEventHandler {
     ObjectStore store = ObjectStoreService.getStore();
     ChordID<InetAddress> selfChordID = ObjectStoreService.getChordSession().getChordNodeID();
     ArrayList<String> allKeys = store.keySet();
-    Map<ChordID<String>, byte[]> misplacedObjects = new HashMap();
+    Map<ChordID<String>, DataContainer> misplacedObjects = new HashMap();
     for (String key : allKeys) {
       ChordID<String> chordKey = new ChordID<>(key);
       if (chordKey.compareTo(selfChordID) < 0 &&

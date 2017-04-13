@@ -32,7 +32,7 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public byte[] getObject(ChordID<String> key) throws RemoteException {
+  public DataContainer getObject(ChordID<String> key) throws RemoteException {
     if (!localStorage.containsKey(key.getKey())) {
       return null;
     } else {
@@ -41,7 +41,7 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean putObject(ChordID<String> key, byte[] value) throws RemoteException {
+  public boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException {
     try {
       localStorage.put(key.getKey(), value);
     } catch (Exception e) {
@@ -52,9 +52,9 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean putObjects(Map<ChordID<String>, byte[]> keyValueMap) throws RemoteException {
+  public boolean putObjects(Map<ChordID<String>, DataContainer> keyValueMap) throws RemoteException {
     boolean result = true;
-    for (Map.Entry<ChordID<String>, byte[]> e : keyValueMap.entrySet()) {
+    for (Map.Entry<ChordID<String>, DataContainer> e : keyValueMap.entrySet()) {
       result &= putObject(e.getKey(), e.getValue());
     }
     logger.info("Accepted " + keyValueMap.size() + " new keys");
@@ -73,6 +73,12 @@ class ObjectStore implements ObjectStoreOperations {
       delete(k);
     }
     return true;
+  }
+
+  @Override
+  public boolean replicate(String key, DataContainer value) throws RemoteException {
+
+    return false;
   }
 
   /* this method is written only for testing purposes */

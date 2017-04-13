@@ -15,14 +15,15 @@ import edu.ncsu.chord.ChordID;
  */
 public interface ObjectStoreOperations extends Remote {
 
-  byte[] getObject(ChordID<String> key) throws RemoteException;
+  DataContainer getObject(ChordID<String> key) throws RemoteException;
 
-  boolean putObject(ChordID<String> key, byte[] value) throws RemoteException;
+  boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException;
 
-  boolean putObjects(Map<ChordID<String>, byte[]> keyValueMap) throws RemoteException;
+  boolean putObjects(Map<ChordID<String>, DataContainer> keyValueMap) throws RemoteException;
 
   boolean delete(ChordID<String> key) throws RemoteException;
 
   boolean deleteKeys(ArrayList<ChordID<String>> key) throws RemoteException;
 
+  boolean replicate(String key, DataContainer value) throws RemoteException;
 }

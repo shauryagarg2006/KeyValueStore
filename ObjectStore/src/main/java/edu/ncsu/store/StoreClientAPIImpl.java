@@ -45,7 +45,7 @@ public class StoreClientAPIImpl implements StoreClientAPI {
     ObjectStoreOperations responsibleStore = StoreRMIUtils.getRemoteObjectStore(responsibleNodeID.getKey());
     Object value = null;
     try {
-      byte[] val = responsibleStore.getObject(chordKey);
+      byte[] val = responsibleStore.getObject(chordKey).value;
       if (val == null) {
 	logger.error("Key " + key + " not found on " + session.getChordNodeID());
       } else {
@@ -66,7 +66,8 @@ public class StoreClientAPIImpl implements StoreClientAPI {
 
     /* Serialize the value */
     try {
-      responsibleStore.putObject(chordKey, serialize(value));
+      responsibleStore.putObject(chordKey, new DataContainer(serialize(value),
+                                                             StoreConfig.REPLICATION_COUNT));
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -11,21 +11,21 @@ import org.apache.log4j.Logger;
  */
 class HashStorage implements LocalStorage {
 
-  private HashMap<String, byte[]> storage;
+  private HashMap<String, DataContainer> storage;
 
   /* Keep all loggers transient so that they are not passed over RMI call */
   private final transient static Logger logger = Logger.getLogger(HashStorage.class);
 
   public HashStorage() {
-	storage = new HashMap<String, byte[]>();
+	storage = new HashMap<String, DataContainer>();
 }
   @Override
-  public byte[] get(String key) {
+  public DataContainer get(String key) {
     return storage.get(key);
   }
 
   @Override
-  public void put(String key, byte[] value) {
+  public void put(String key, DataContainer value) {
     storage.put(key, value);
   }
 
