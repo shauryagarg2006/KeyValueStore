@@ -95,10 +95,10 @@ public class ChordEventHandler implements UpcallEventHandler {
     logger.info("About to replicate below keys: " + new ArrayList<>(replicableKeys.keySet()));
     // Start key movement. First get remote object for predecessor object store
     ObjectStoreOperations
-        predecessorStore =
+        successorStore =
         StoreRMIUtils.getRemoteObjectStore(newSuccessor.getKey());
     try {
-      predecessorStore.makeReplicas(replicableKeys);
+      successorStore.makeReplicas(replicableKeys);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -190,6 +190,7 @@ public class ChordEventHandler implements UpcallEventHandler {
         break;
       }
       case SUCCESSOR_FAILED: {
+        moveKeystoNewSuccessor(prevValue, newValue);
         break;
       }
       default:
