@@ -50,9 +50,8 @@ public class KeyLocationTest {
           prevNodeID = (i == 0) ? sortedNodeIdList.get(sortedNodeIdList.size() - 1) : sortedNodeIdList.get(i - 1);
           for (String s : keys) {
             ChordID<String> chordKey = new ChordID<>(s);
-            if (!chordKey.inRange(prevNodeID, currNodeID, false, true)) {
-              logger.error("Key: " + chordKey + " present on node " + currNodeID);
-            }
+            Assert.assertTrue("Key: " + chordKey + " present on node " + currNodeID,
+                              chordKey.inRange(prevNodeID, currNodeID, false, true));
           }
         } catch (RemoteException e) {
           e.printStackTrace();
