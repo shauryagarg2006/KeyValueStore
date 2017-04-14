@@ -80,10 +80,10 @@ class ObjectStore implements ObjectStoreOperations {
 
   @Override
   public boolean makeReplicas(String key, DataContainer value) throws RemoteException {
-    if (value.replicaNumber > 0) {
+    if ((value.replicaNumber + 1) <= StoreConfig.REPLICATION_COUNT) {
       ChordID<InetAddress> successorChordID = ObjectStoreService.getChordSession().getSelfSuccessor();
       ObjectStoreOperations successorStore = StoreRMIUtils.getRemoteObjectStore(successorChordID.getKey());
-      successorStore.makeReplicas(key, new DataContainer(value.value, value.replicaNumber - 1));
+      successorStore.makeReplicas(key, new DataContainer(value.value, value.replicaNumber + 1));
       logger.info("Creating " + value.replicaNumber + "th copy of " +
                   key + " on Node: " + ObjectStoreService.getChordSession().getChordNodeID());
     }

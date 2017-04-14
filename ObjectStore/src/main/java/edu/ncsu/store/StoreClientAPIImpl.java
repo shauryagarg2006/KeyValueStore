@@ -66,8 +66,8 @@ public class StoreClientAPIImpl implements StoreClientAPI {
 
     /* Serialize the value */
     try {
-      responsibleStore.putObject(chordKey, new DataContainer(serialize(value),
-                                                             StoreConfig.REPLICATION_COUNT));
+      final int REPLICA_NUMBER = 1;
+      responsibleStore.putObject(chordKey, new DataContainer(serialize(value), REPLICA_NUMBER));
     } catch (Exception e) {
       e.printStackTrace();
     }
