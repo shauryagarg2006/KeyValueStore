@@ -154,6 +154,7 @@ public class Client {
   }
 
   public static void main(String args[]) {
+    System.out.println("Arg1: " + args[0] + " Arg2:" + args[1]);
     if (args.length != 2) {
       System.out.println("Usage: java Client <PUT/GET/TEST> <NKEYS>");
       System.exit(0);
