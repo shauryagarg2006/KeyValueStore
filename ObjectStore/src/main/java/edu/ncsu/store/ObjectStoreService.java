@@ -33,7 +33,7 @@ class ObjectStoreService {
     /* Set custom SocketFactories for handling RMI timeout */
       RMISocketFactory.setSocketFactory(new RMISocketFactory() {
         public Socket createSocket(String host, int port) throws IOException {
-          int timeoutMillis = 10000; /* RMI call waits for 10 seconds */
+          int timeoutMillis = StoreConfig.RMI_TIMEOUT * 1000; /* RMI call waits for 'RMI_TIMEOUT' seconds */
           Socket socket = new Socket();
           socket.setSoTimeout(timeoutMillis);
           socket.setSoLinger(false, 0);

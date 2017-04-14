@@ -67,16 +67,16 @@ class ChordRMIUtils {
 	throw new RemoteException();
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       logger.error("Unable to get Remote object for " + ip + " Trying one more time...");
       /* Try one more time before giving up */
       try {
 	nops = (ChordOperations) Naming.lookup(serverURL);
       } catch (Exception nestedException) {
-	nestedException.printStackTrace();
+        logger.error("Node " + ip + " is failed.");
+	//nestedException.printStackTrace();
 	nops = null;
       }
-      e.printStackTrace();
     }
     return nops;
   }

@@ -41,6 +41,7 @@ public class ChordSession {
     }
 
     /* Schedule stabilize & fixFingers method to run after every 1 second */
+
     ScheduledExecutorService stabilizer = Executors.newScheduledThreadPool(1);
     stabilizer.scheduleAtFixedRate(() -> {
       try {
@@ -50,7 +51,7 @@ public class ChordSession {
       } catch (RemoteException e) {
 	e.printStackTrace();
       }
-    }, 1, 1, TimeUnit.SECONDS);
+    }, ChordConfig.STABILIZER_INITIAL_DELAY, ChordConfig.STABILIZER_PERIOD, TimeUnit.SECONDS);
 
     return result;
   }

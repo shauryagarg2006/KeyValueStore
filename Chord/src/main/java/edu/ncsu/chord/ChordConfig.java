@@ -32,4 +32,10 @@ class ChordConfig {
 
   /* Network interface to be used for communication */
   static String NetworkInterface = "eth0";
+
+  /* Seconds to wait before stabilization process starts */
+  static int STABILIZER_INITIAL_DELAY = 2;
+
+  /* Seconds after which stabilizer function should be called again */
+  static int STABILIZER_PERIOD = 2;
 }

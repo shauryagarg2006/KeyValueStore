@@ -10,4 +10,7 @@ class StoreConfig {
 
   /* Number of replicas to maintain */
   static int REPLICATION_COUNT = 2;
+
+  /* RMI Call timeout - Seconds to wait before call is considered as failed */
+  static int RMI_TIMEOUT = 1;
 }
