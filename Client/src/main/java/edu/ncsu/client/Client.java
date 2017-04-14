@@ -26,8 +26,8 @@ public class Client {
   private final transient static Logger logger = Logger.getLogger(Client.class);
 
   /* All keys-values used for get & put will be taken & verified from below file */
-  private String inputDataPath = "/root/keyvalue/Resources/tests/input_keys";
-  private String ipListPath = "/root/keyvalue/Resources/tests/node_ip_list";
+  private String inputDataPath = "/root/KeyValueStore/Resources/tests/input_keys";
+  private String ipListPath = "/root/KeyValueStore/Resources/tests/node_ip_list";
 
   HashMap<String, String> keyValueMap;
   ArrayList<ChordID<InetAddress>> ipList;
