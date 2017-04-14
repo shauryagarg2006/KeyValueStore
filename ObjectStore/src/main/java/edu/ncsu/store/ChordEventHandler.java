@@ -29,20 +29,16 @@ public class ChordEventHandler implements UpcallEventHandler {
       /* Go through all keys of localStorage and see if we have any keys that needs to be
       moved to this new predecessor.*/
     ObjectStore store = ObjectStoreService.getStore();
-    ArrayList<String> allKeys = store.keySet();
+    Map<String, DataContainer> allKeys = store.dumpStore();
     Map<ChordID<String>, DataContainer> misplacedObjects = new HashMap();
-    for (String key : allKeys) {
-      ChordID<String> chordKey = new ChordID<>(key);
-      try {
-        DataContainer valueContainer = store.getObject(chordKey);
-        if (valueContainer.replicaNumber != 1 ||
-            chordKey.inRange(prevPredecessor, newPredecessor, false, true)) {
-          // This key ID is either a replica or belongs to new predecessor
-          // This key needs to be moved to new predecessor.
-          misplacedObjects.put(chordKey, valueContainer);
-        }
-      } catch (RemoteException e) {
-        e.printStackTrace();
+    for (Map.Entry<String, DataContainer> entry : allKeys.entrySet()) {
+      ChordID<String> chordKey = new ChordID<>(entry.getKey());
+      DataContainer valueContainer = entry.getValue();
+      if (valueContainer.replicaNumber != 1 ||
+          chordKey.inRange(prevPredecessor, newPredecessor, false, true)) {
+        // This key ID is either a replica or belongs to new predecessor
+        // This key needs to be moved to new predecessor.
+        misplacedObjects.put(chordKey, valueContainer);
       }
     }
     logger.info("Number of keys that needs to moved: " + misplacedObjects.size());
@@ -76,18 +72,14 @@ public class ChordEventHandler implements UpcallEventHandler {
       return;
     }
 
-    ArrayList<String> allKeys = store.keySet();
+    Map<String, DataContainer> allKeys = store.dumpStore();
     Map<ChordID<String>, DataContainer> replicableKeys = new HashMap();
-    for (String key : allKeys) {
-      ChordID<String> chordKey = new ChordID<>(key);
-      try {
-        DataContainer valueContainer = store.getObject(chordKey);
-        if (valueContainer.replicaNumber != StoreConfig.REPLICATION_COUNT ) {
-          // This key ID can be further replicated
-          replicableKeys.put(chordKey, valueContainer);
-        }
-      } catch (RemoteException e) {
-        e.printStackTrace();
+    for (Map.Entry<String, DataContainer> entry : allKeys.entrySet()) {
+      ChordID<String> chordKey = new ChordID<>(entry.getKey());
+      DataContainer valueContainer = entry.getValue();
+      if (valueContainer.replicaNumber != StoreConfig.REPLICATION_COUNT ) {
+        // This key ID can be further replicated
+        replicableKeys.put(chordKey, valueContainer);
       }
     }
     logger.info("Number of keys that can be replicated: " + replicableKeys.size());
@@ -129,20 +121,16 @@ public class ChordEventHandler implements UpcallEventHandler {
     /* Go through all keys of localStorage and see if we have any keys that needs to bb
       further replicated.*/
     ObjectStore store = ObjectStoreService.getStore();
-    ArrayList<String> allKeys = store.keySet();
+    HashMap<String, DataContainer> allKeys = store.dumpStore();
     Map<ChordID<String>, DataContainer> replicableKeys = new HashMap();
-    for (String key : allKeys) {
-      ChordID<String> chordKey = new ChordID<>(key);
-      try {
-        DataContainer valueContainer = store.getObject(chordKey);
-        /* Second replicas are the keys whose primary node failed - now you are the primary node for those */
-        if (valueContainer.replicaNumber == 2 ) {
-          // This key ID can be further replicated
-          valueContainer.replicaNumber = 1;
-          replicableKeys.put(chordKey, valueContainer);
-        }
-      } catch (RemoteException e) {
-        e.printStackTrace();
+    for (Map.Entry<String, DataContainer> entry : allKeys.entrySet()) {
+      ChordID<String> chordKey = new ChordID<>(entry.getKey());
+      DataContainer valueContainer = entry.getValue();
+      /* Second replicas are the keys whose primary node failed - now you are the primary node for those */
+      if (valueContainer.replicaNumber == 2 ) {
+        // This key ID can be further replicated
+        valueContainer.replicaNumber = 1;
+        replicableKeys.put(chordKey, valueContainer);
       }
     }
     logger.info("Number of keys that can be replicated: " + replicableKeys.size());
