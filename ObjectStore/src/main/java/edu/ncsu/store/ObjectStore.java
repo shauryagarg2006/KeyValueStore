@@ -124,8 +124,8 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   /* this method is written only for testing purposes */
-  public ArrayList<String> keySet() {
-    return new ArrayList<String>(localStorage.keySet());
+  public HashMap<String, DataContainer> dumpStore() {
+    return localStorage.dumpStorage();
   }
 
 }

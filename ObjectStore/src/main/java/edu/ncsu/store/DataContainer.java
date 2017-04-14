@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 public class DataContainer implements Serializable {
 
-  byte[] value;
-  int replicaNumber;
+  public byte[] value;
+  public int replicaNumber;
 
   public DataContainer(byte[] value, int replicaNumber) {
     this.value = value;

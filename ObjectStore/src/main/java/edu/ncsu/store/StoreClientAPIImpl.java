@@ -84,8 +84,8 @@ public class StoreClientAPIImpl implements StoreClientAPI {
   }
 
   @Override
-  public ArrayList<String> keySet() throws RemoteException {
-    return ObjectStoreService.getStore().keySet();
+  public HashMap<String, DataContainer> dumpStore() throws RemoteException {
+    return ObjectStoreService.getStore().dumpStore();
   }
 
 }

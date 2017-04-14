@@ -1,6 +1,9 @@
 package edu.ncsu.store;
 
+import java.util.HashMap;
 import java.util.Set;
+
+
 
 /**
  * Created by amit on 1/4/17.
@@ -14,7 +17,7 @@ interface LocalStorage {
 
   void delete(String key);
 
-  Set<String> keySet();
+  HashMap<String, DataContainer> dumpStorage();
 
   int size();
 }

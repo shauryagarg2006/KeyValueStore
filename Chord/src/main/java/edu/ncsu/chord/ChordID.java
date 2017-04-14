@@ -41,4 +41,9 @@ public class ChordID<T> extends SHA256Hash implements Serializable {
     ChordID<T> hash = (ChordID<T>) obj;
     return hash.key.equals(this.key) && hash.getValue().equals(this.getValue());
   }
+
+  @Override
+  public int hashCode() {
+    return (super.hashCode() + key.hashCode() * 7);
+  }
 }

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import javax.xml.crypto.Data;
+
 
 /**
  * Created by amit on 1/4/17.
@@ -40,8 +42,8 @@ class HashStorage implements LocalStorage {
   }
 
   @Override
-  public Set<String> keySet() {
-    return storage.keySet();
+  public HashMap<String, DataContainer> dumpStorage() {
+    return storage;
   }
 
   @Override

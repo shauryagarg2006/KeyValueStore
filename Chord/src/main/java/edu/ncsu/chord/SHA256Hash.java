@@ -132,4 +132,9 @@ public class SHA256Hash implements Hash, Serializable {
     SHA256Hash hash = (SHA256Hash) o;
     return (hash.hashValue == this.hashValue);
   }
+
+  @Override
+  public int hashCode() {
+    return (int) (hashValue * 31 + MOD * 11 + MAX_BITS);
+  }
 }
