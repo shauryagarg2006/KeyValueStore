@@ -1,5 +1,11 @@
 package edu.ncsu.store;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.rmi.server.RMISocketFactory;
+
 import edu.ncsu.chord.ChordDriver;
 import edu.ncsu.chord.ChordSession;
 
@@ -22,7 +28,32 @@ class ObjectStoreService {
     return store;
   }
 
+  private static void initRMI() {
+    try {
+    /* Set custom SocketFactories for handling RMI timeout */
+      RMISocketFactory.setSocketFactory(new RMISocketFactory() {
+        public Socket createSocket(String host, int port) throws IOException {
+          int timeoutMillis = 10000; /* RMI call waits for 10 seconds */
+          Socket socket = new Socket();
+          socket.setSoTimeout(timeoutMillis);
+          socket.setSoLinger(false, 0);
+          socket.connect(new InetSocketAddress(host, port), timeoutMillis);
+          return socket;
+        }
+
+        public ServerSocket createServerSocket(int port) throws IOException {
+          return new ServerSocket(port);
+        }
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   private static void start() {
+    /* Initialize RMI */
+    initRMI();
+
     /* First start chord node and join network */
     chordSession = ChordDriver.getSession();
     chordSession.registerUpcall(new ChordEventHandler());
