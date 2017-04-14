@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.crypto.Data;
+
 import edu.ncsu.chord.ChordDriver;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.ChordOperations;
@@ -40,26 +42,34 @@ class ObjectStore implements ObjectStoreOperations {
     }
   }
 
-  @Override
-  public boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException {
-    try {
-      logger.info("Creating first copy of " + key +
-                  " on Node: " + ObjectStoreService.getChordSession().getChordNodeID());
-      makeReplicas(key.getKey(), value);
-      localStorage.put(key.getKey(), value);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
+//  @Override
+//  public boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException {
+//    try {
+//      logger.info("Creating first copy of " + key +
+//                  " on Node: " + ObjectStoreService.getChordSession().getChordNodeID());
+//      Map<ChordID<String>, DataContainer> replicaData = new HashMap<>();
+//      replicaData.put(key, value);
+//      makeReplicas(replicaData);
+//      localStorage.put(key.getKey(), value);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      return false;
+//    }
+//    return true;
+//  }
 
   @Override
   public boolean putObjects(Map<ChordID<String>, DataContainer> keyValueMap) throws RemoteException {
     boolean result = true;
-    for (Map.Entry<ChordID<String>, DataContainer> e : keyValueMap.entrySet()) {
-      result &= putObject(e.getKey(), e.getValue());
-    }
+    makeReplicas(keyValueMap);
+//    for (Map.Entry<ChordID<String>, DataContainer> e : keyValueMap.entrySet()) {
+//      try {
+//        localStorage.put(e.getKey().getKey(), e.getValue());
+//      } catch (Exception ex) {
+//        ex.printStackTrace();
+//      }
+//      //result &= putObject(e.getKey(), e.getValue());
+//    }
     logger.info("Accepted " + keyValueMap.size() + " new keys");
     return result;
   }
@@ -79,16 +89,28 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean makeReplicas(String key, DataContainer value) throws RemoteException {
-    if ((value.replicaNumber + 1) <= StoreConfig.REPLICATION_COUNT) {
+  public boolean makeReplicas(Map<ChordID<String>, DataContainer> replicaData) throws RemoteException {
+    /* ReplicaData is set of keys that needs to be replicated. However for few of them this node
+    might be the last copy node. So separate those keys from the keys that needs to be passed further
+     */
+    Map<ChordID<String>, DataContainer> furtherPassedKeys = new HashMap<>();
+    for (ChordID<String> s : replicaData.keySet()) {
+      DataContainer valueContainer = replicaData.get(s);
+      if ((valueContainer.replicaNumber + 1) <= StoreConfig.REPLICATION_COUNT) {
+        furtherPassedKeys.put(s, new DataContainer(valueContainer.value, valueContainer.replicaNumber + 1));
+      }
+    }
+
+    if (furtherPassedKeys.size() > 0) {
       ChordID<InetAddress> successorChordID = ObjectStoreService.getChordSession().getSelfSuccessor();
       ObjectStoreOperations successorStore = StoreRMIUtils.getRemoteObjectStore(successorChordID.getKey());
-      successorStore.makeReplicas(key, new DataContainer(value.value, value.replicaNumber + 1));
-      logger.info("Creating " + value.replicaNumber + "th copy of " +
-                  key + " on Node: " + ObjectStoreService.getChordSession().getChordNodeID());
+      successorStore.makeReplicas(furtherPassedKeys);
     }
+
     try {
-      localStorage.put(key, value);
+      for (Map.Entry<ChordID<String>, DataContainer> e : replicaData.entrySet()) {
+        localStorage.put(e.getKey().getKey(), e.getValue());
+      }
     } catch (Exception e) {
       e.printStackTrace();
       return false;
@@ -97,7 +119,7 @@ class ObjectStore implements ObjectStoreOperations {
   }
 
   @Override
-  public boolean removeReplicas(String key, DataContainer value) throws RemoteException {
+  public boolean removeReplicas(Map<ChordID<String>, DataContainer> replicaData) throws RemoteException {
     return false;
   }
 

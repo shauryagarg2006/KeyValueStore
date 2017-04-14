@@ -17,7 +17,7 @@ public interface ObjectStoreOperations extends Remote {
 
   DataContainer getObject(ChordID<String> key) throws RemoteException;
 
-  boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException;
+  //boolean putObject(ChordID<String> key, DataContainer value) throws RemoteException;
 
   boolean putObjects(Map<ChordID<String>, DataContainer> keyValueMap) throws RemoteException;
 
@@ -25,7 +25,7 @@ public interface ObjectStoreOperations extends Remote {
 
   boolean deleteKeys(ArrayList<ChordID<String>> key) throws RemoteException;
 
-  boolean makeReplicas(String key, DataContainer value) throws RemoteException;
+  boolean makeReplicas(Map<ChordID<String>, DataContainer> replicaData) throws RemoteException;
 
-  boolean removeReplicas(String key, DataContainer value) throws RemoteException;
+  boolean removeReplicas(Map<ChordID<String>, DataContainer>  replicaData) throws RemoteException;
 }

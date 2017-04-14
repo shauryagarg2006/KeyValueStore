@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import edu.ncsu.chord.ChordID;
 import edu.ncsu.chord.ChordSession;
@@ -45,10 +47,11 @@ public class StoreClientAPIImpl implements StoreClientAPI {
     ObjectStoreOperations responsibleStore = StoreRMIUtils.getRemoteObjectStore(responsibleNodeID.getKey());
     Object value = null;
     try {
-      byte[] val = responsibleStore.getObject(chordKey).value;
-      if (val == null) {
+      DataContainer containerValue = responsibleStore.getObject(chordKey);
+      if (containerValue == null) {
 	logger.error("Key " + key + " not found on " + session.getChordNodeID());
       } else {
+        byte[] val = containerValue.value;
 	value = deserialize(val);
       }
     } catch (Exception e) {
@@ -67,7 +70,9 @@ public class StoreClientAPIImpl implements StoreClientAPI {
     /* Serialize the value */
     try {
       final int REPLICA_NUMBER = 1;
-      responsibleStore.putObject(chordKey, new DataContainer(serialize(value), REPLICA_NUMBER));
+      Map<ChordID<String>, DataContainer> data = new HashMap<>();
+      data.put(chordKey, new DataContainer(serialize(value), REPLICA_NUMBER));
+      responsibleStore.putObjects(data);
     } catch (Exception e) {
       e.printStackTrace();
     }
