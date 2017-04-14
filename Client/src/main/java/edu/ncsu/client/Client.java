@@ -43,6 +43,7 @@ public class Client {
       System.out
 	  .println("Average Time Taken to put key : " + (average_time / values.size()) + " For "
 		   + values.size() + " keys");
+      Thread.sleep(1000*120);
       average_time = 0.0;
       for (Map.Entry<String, String> e : values.entrySet()) {
 	long before_time = System.currentTimeMillis();
