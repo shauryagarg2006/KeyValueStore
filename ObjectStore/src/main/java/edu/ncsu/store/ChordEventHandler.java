@@ -71,6 +71,11 @@ public class ChordEventHandler implements UpcallEventHandler {
     /* Go through all keys of localStorage and see if we have any keys that needs to bb
       further replicated.*/
     ObjectStore store = ObjectStoreService.getStore();
+    if (store == null) {
+      logger.info("Store Object found to be NULL. No further action needed!");
+      return;
+    }
+
     ArrayList<String> allKeys = store.keySet();
     Map<ChordID<String>, DataContainer> replicableKeys = new HashMap();
     for (String key : allKeys) {
