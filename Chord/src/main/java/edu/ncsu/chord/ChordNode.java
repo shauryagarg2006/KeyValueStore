@@ -55,18 +55,23 @@ class ChordNode implements ChordOperations {
     this.upcallHandler = upcallHandler;
   }
 
-  private void setPredecessorChordID(ChordID<InetAddress> chordID) {
+  private void setPredecessorChordID(Event updateEvent, ChordID<InetAddress> chordID) {
+    ChordID<InetAddress> prevPredecessor = this.predecessorChordID;
     this.predecessorChordID = chordID;
     if (upcallHandler != null)
-      upcallHandler.handleEvent(predecessorChordID);
+      upcallHandler.handleEvent(updateEvent, prevPredecessor, chordID);
   }
 
-  private void setSuccessor(ChordID<InetAddress> successorChordID) {
+  private void setSuccessor(Event updateEvent, ChordID<InetAddress> successorChordID) {
     logger.debug("[Entry] Method:  setSuccessor " + "@" + selfChordID +
 		 " Caller: " + selfChordID + "Parameters: " + successorChordID);
+
+    ChordID<InetAddress> prevSuccessor = fingerTable.getEntry(0).responsibleNodeID;
     synchronized (this) {
       fingerTable.getEntry(0).responsibleNodeID = successorChordID;
     }
+    upcallHandler.handleEvent(updateEvent, prevSuccessor, successorChordID);
+
     logger.debug("[Exit] Method:  setSuccessor " + "@" + selfChordID +
 		 " Caller: " + selfChordID + "Parameters: " + successorChordID);
   }
@@ -185,7 +190,7 @@ class ChordNode implements ChordOperations {
         result = false;
       } else {
         /* Joining the network for first time. Get successor ID from bootstrap node */
-        setSuccessor(bootstrapNodeROR.getSuccessor(selfChordID));
+        setSuccessor(Event.NEW_SUCCESSOR, bootstrapNodeROR.getSuccessor(selfChordID));
       }
 
     logger.debug("[Exit] Method:  join " + "@" + selfChordID +
@@ -214,7 +219,7 @@ class ChordNode implements ChordOperations {
       ChordID<InetAddress> predecessorOfSuccessor = successorROR.getPredecessor(selfChordID);
       logger.debug("Predecessor found from successor is " + predecessorOfSuccessor);
       if (predecessorOfSuccessor.inRange(selfChordID, successorChordID, false, false)) {
-	setSuccessor(predecessorOfSuccessor);
+	setSuccessor(Event.NEW_SUCCESSOR, predecessorOfSuccessor);
       }
       successorROR = ChordRMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
       if (successorROR == null) {
@@ -239,7 +244,7 @@ class ChordNode implements ChordOperations {
     logger.debug(" Current predecessor is " + predecessorChordID);
     /* If new value is more closer or current predecessor is down => update predecessor */
     if (possiblePredecessor.inRange(predecessorChordID, selfChordID, false, false)) {
-      setPredecessorChordID(possiblePredecessor);
+      setPredecessorChordID(Event.NEW_PREDECESSOR, possiblePredecessor);
     }
     logger.debug(" Updated predecessor is " + predecessorChordID);
 
@@ -322,7 +327,7 @@ class ChordNode implements ChordOperations {
       for (int i = 1; i < successorList.size(); i++) {
 	successorROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(i).getKey());
 	if (successorROR != null) {
-	  setSuccessor(successorList.get(i));
+	  setSuccessor(Event.SUCCESSOR_FAILED, successorList.get(i));
 	  break;
 	}
       }
@@ -361,7 +366,7 @@ class ChordNode implements ChordOperations {
     /* Also check if your predecessor is still up and running */
     if (ChordRMIUtils.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
       synchronized (this) {
-        setPredecessorChordID(selfChordID);
+        setPredecessorChordID(Event.PREDECESSOR_FAILED, selfChordID);
       }
     }
 

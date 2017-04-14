@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by amit on 11/4/17.
  */
-class DataContainer implements Serializable {
+public class DataContainer implements Serializable {
 
   byte[] value;
   int replicaNumber;

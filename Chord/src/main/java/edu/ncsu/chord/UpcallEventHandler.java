@@ -9,5 +9,6 @@ public interface UpcallEventHandler {
   // TODO: for now this event handler will only notify arrival of new
   // predecessor. In future support for multiple events can be handled.
   // Node failure event will also be required by KeyStore module.
-  void handleEvent(ChordID<InetAddress> newPredecessor);
+  void handleEvent(Event event,
+                   ChordID<InetAddress> prevValue, ChordID<InetAddress> newValue);
 }
