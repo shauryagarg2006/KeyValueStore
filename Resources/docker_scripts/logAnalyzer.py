@@ -3,14 +3,18 @@ import json
 import docker
 import datetime
 import time
+import subprocess
+from os.path import expanduser
 
+
+home = expanduser("~")
 script_start_time = ""
 verified_nodes = []
 node_list = []
 begin_time = ""
 end_time = ""
 total_num_of_nodes = 0
-log_file_path = "../../../../log_server/logs/analysis.log"
+log_file_path = home + "/log_server/logs/analysis.log"
 current_ip_list = []
 
 
