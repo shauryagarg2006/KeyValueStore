@@ -1,12 +1,17 @@
 import sys
 import json
 import docker
+import datetime
+import time
 
+script_start_time = ""
 verified_nodes = []
 node_list = []
 begin_time = ""
 end_time = ""
 total_num_of_nodes = 0
+log_file_path = "../../../../log_server/logs/analysis.log"
+current_ip_list = []
 
 
 def get_correct_chord_id(chord_id):
@@ -23,6 +28,9 @@ def initialize_total_number_of_nodes():
     global total_num_of_nodes
     client = docker.APIClient(base_url='unix://var/run/docker.sock')
     container_list = client.containers()
+    for container_id in container_list:
+        temp_ip = container_id['NetworkSettings']['Networks']['bridge']['IPAddress']
+        current_ip_list.append(temp_ip)
     total_num_of_nodes = len(container_list)
     print "Total Number Of running Nodes : " + str(total_num_of_nodes)
 
@@ -39,11 +47,14 @@ def initialize_node_list(log_file_path):
             elif read_json:
                 js = json.loads(line)
                 chord_id = int(json.dumps(js["selfChordID"]["hashValue"]))
-                if chord_id not in node_list:
+                ip_addr = json.dumps(js["selfChordID"]["key"])
+                ip_addr = ip_addr[1:-1]  # Stripping Of " quotes
+                if ip_addr in current_ip_list:
                     node_list.append(chord_id)
+                    print "Node : IP: " + ip_addr + " Chord Id: " + str(chord_id)
+                    current_ip_list.remove(ip_addr)
                 read_json = False
     node_list.sort()
-    print "Nodes : " + str(node_list)
 
 
 def verify_finger_entry(js):
@@ -66,12 +77,37 @@ def process_json(json_string):
 
 
 # This function will do the log analysis and calculate the stabilization time
-def log_analysis(log_file_path, number_of_joins):
+def log_analysis(log_file_path, type_check, number_check):
+    global begin_time
+    timing = []
     number = 0  # Count of Join statements encountered
     read_json = False
+    start_analysis = False
+    FMT = '%H:%M:%S'
+    is_stable = False
+
     with open(log_file_path) as f:
         for line in f:
-            if number == int(number_of_joins):
+            if "selfChordID" in line:
+                continue
+            temp_time = line[:8]
+            time_diff = datetime.datetime.strptime(script_start_time, FMT) - datetime.datetime.strptime(temp_time, FMT)
+            # print time_diff
+            if time_diff.days < 0:
+                begin_time = timing[-number_check]
+                break
+            if "JOIN" == type_check:
+                if "%JOIN%" in line:
+                    timing.append(line[:8])  # Begin time for calcualtion
+            elif "FAIL" == type_check:
+                if "closing" in line:
+                    timing.append(line[:8])
+    if begin_time == "":
+        print "UNSTABLE"
+        return
+    with open(log_file_path) as f:
+        for line in f:
+            if start_analysis:
                 if "JSON-PAYLOAD" in line:
                     read_json = True
                     end_time = line[:8]
@@ -79,26 +115,33 @@ def log_analysis(log_file_path, number_of_joins):
                     process_json(line)
                     read_json = False
                     if len(verified_nodes) == total_num_of_nodes:
-                        print begin_time
-                        print  end_time
+                        print "Start Time: " + begin_time
+                        print "End Time: " + end_time
+                        time_diff = datetime.datetime.strptime(end_time, FMT) - datetime.datetime.strptime(begin_time,
+                                                                                                           FMT)
+                        print "Seconds: " + str(time_diff.total_seconds())
+                        is_stable = True
                         break
-
             else:
-                if "%JOIN%" in line:
-                    if number == 0:
-                        begin_time = line[:8]  # Begin time for calcualtion
-                    number += 1
+                if "selfChordID" in line:
+                    continue
+                temp_time = line[:8]
+                time_diff = datetime.datetime.strptime(begin_time, FMT) - datetime.datetime.strptime(temp_time,
+                                                                                                     FMT)
+                # print time_diff.minute
+                if time_diff.total_seconds() == 0.0:
+                    start_analysis = True
+    if not is_stable:
+        print "UNSTABLE"
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print 'Invalid Number Of Arguments'
-        print 'Usage: python logAnalyzer.py <path_to_analysis_log> <number_of_new_nodes> [total_num_nodes]'
+        print 'Usage: python logAnalyzer.py <JOIN/FAIL> [Number]'
         sys.exit()
-    if len(sys.argv) == 3:
-        initialize_total_number_of_nodes()
-    else:
-        print "Total Number Of running Nodes : " + sys.argv[3]
-        total_num_of_nodes = int(sys.argv[3])
-    initialize_node_list(sys.argv[1])
-    log_analysis(sys.argv[1], sys.argv[2])
+    script_start_time = datetime.datetime.now().time().strftime("%H:%M:%S")
+    time.sleep(2)
+    initialize_total_number_of_nodes()
+    initialize_node_list(log_file_path)
+    log_analysis(log_file_path, sys.argv[1], int(sys.argv[2]))
