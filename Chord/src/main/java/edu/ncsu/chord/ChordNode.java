@@ -57,7 +57,9 @@ class ChordNode implements ChordOperations {
 
   private void setPredecessorChordID(Event updateEvent, ChordID<InetAddress> chordID) {
     ChordID<InetAddress> prevPredecessor = this.predecessorChordID;
-    this.predecessorChordID = chordID;
+    synchronized (this) {
+      this.predecessorChordID = chordID;
+    }
     if (upcallHandler != null)
       upcallHandler.handleEvent(updateEvent, prevPredecessor, chordID);
   }
@@ -263,12 +265,12 @@ class ChordNode implements ChordOperations {
                                                                        .getKey());
     if (previousEntryROR != null) {
       ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
-      synchronized (this) {
+//      synchronized (this) {
         if (index == successorList.size())
           successorList.add(index, nextSuccessor);
         else
           successorList.set(index, nextSuccessor);
-      }
+//      }
     }
   }
 
@@ -280,13 +282,13 @@ class ChordNode implements ChordOperations {
     successorList.clear();
 
     /* First entry in the successor list is direct successor */
-    synchronized (this) {
+//    synchronized (this) {
       if (successorList.size() == 0) {
         successorList.add(0, getSuccessor(selfChordID));
       } else {
         successorList.set(0, getSuccessor(selfChordID));
       }
-    }
+//    }
 
     /* First update current entries in the list */
     for (int i = 1; i < successorList.size(); i++) {
@@ -353,9 +355,9 @@ class ChordNode implements ChordOperations {
 	      successorROR.getSuccessor(selfChordID, fingerTable.getEntry(i).hashRangeStart);
 	}
 
-        synchronized (this) {
+//        synchronized (this) {
           entry.responsibleNodeID = responsibleNode;
-        }
+//        }
       }
 
       /* Also update your successor list */
@@ -365,9 +367,9 @@ class ChordNode implements ChordOperations {
 
     /* Also check if your predecessor is still up and running */
     if (ChordRMIUtils.getRemoteNodeObject(predecessorChordID.getKey()) == null) {
-      synchronized (this) {
+      //synchronized (this) {
         setPredecessorChordID(Event.PREDECESSOR_FAILED, selfChordID);
-      }
+      //}
     }
 
     logger.info(fingerTable.toString());
