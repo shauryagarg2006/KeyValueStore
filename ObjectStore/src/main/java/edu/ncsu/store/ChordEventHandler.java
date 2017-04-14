@@ -115,14 +115,47 @@ public class ChordEventHandler implements UpcallEventHandler {
 
   }
 
-  public void handlePredecessorFailure(ChordID<InetAddress> prevPredecessor,
+  public void replicateKeysofFailedPredecessor(ChordID<InetAddress> prevPredecessor,
                                      ChordID<InetAddress> newPredecessor) {
-    /**
+    /** replicateKeysofFailedPredecessor:
      *  When predecessor fails, you need to call replicate Keys on all the
-     *  keys with replicaNumber > 1. (keys with replicaNumber == 1 are the keys
-     *  that belong to you and have no relation with predecessor)
+     *  keys with replicaNumber == 2. (keys with replicaNumber == 2 are the keys
+     *  which had failed predecessor as primary node)
      *  */
+    // move all the keys with replicaNumber != StoreConfig.REPLICATION_COUNT to this new successor
+    logger.info("Handler called in " + ObjectStoreService.getChordSession().getChordNodeID()
+                + " failed predecessor is: " + prevPredecessor);
 
+    /* Go through all keys of localStorage and see if we have any keys that needs to bb
+      further replicated.*/
+    ObjectStore store = ObjectStoreService.getStore();
+    ArrayList<String> allKeys = store.keySet();
+    Map<ChordID<String>, DataContainer> replicableKeys = new HashMap();
+    for (String key : allKeys) {
+      ChordID<String> chordKey = new ChordID<>(key);
+      try {
+        DataContainer valueContainer = store.getObject(chordKey);
+        /* Second replicas are the keys whose primary node failed - now you are the primary node for those */
+        if (valueContainer.replicaNumber == 2 ) {
+          // This key ID can be further replicated
+          valueContainer.replicaNumber = 1;
+          replicableKeys.put(chordKey, valueContainer);
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      }
+    }
+    logger.info("Number of keys that can be replicated: " + replicableKeys.size());
+    // TODO: remove below log statement after debugging is done
+    logger.info("About to replicate below keys: " + new ArrayList<>(replicableKeys.keySet()));
+    // Start key movement. First get remote object for predecessor object store
+    ObjectStoreOperations successorStore =
+        StoreRMIUtils.getRemoteObjectStore(ObjectStoreService.getChordSession().getSelfSuccessor().getKey());
+    try {
+      successorStore.makeReplicas(replicableKeys);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 
@@ -153,6 +186,7 @@ public class ChordEventHandler implements UpcallEventHandler {
         break;
       }
       case PREDECESSOR_FAILED: {
+        replicateKeysofFailedPredecessor(prevValue, newValue);
         break;
       }
       case SUCCESSOR_FAILED: {
