@@ -70,7 +70,6 @@ class ObjectStore implements ObjectStoreOperations {
 //      }
 //      //result &= putObject(e.getKey(), e.getValue());
 //    }
-    logger.info("Accepted " + keyValueMap.size() + " new keys");
     return result;
   }
 

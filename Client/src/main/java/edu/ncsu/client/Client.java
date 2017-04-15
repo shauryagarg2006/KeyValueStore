@@ -115,18 +115,18 @@ public class Client {
     return ipList.get(i);
   }
 
-  private boolean verifyKeyLocation(ChordID<String> key) {
+  private boolean verifyKeyLocation(ChordID<String> chordKey) {
     ChordID<InetAddress> responsibleNode = null;
     boolean result = true;
     for (int i = 1; i <= StoreConfig.REPLICATION_COUNT; i++) {
-      responsibleNode = getResponsibleNode(key, i);
-      if (!nodeDataMap.get(responsibleNode).containsKey(key.getKey())) {
-        logger.error("Key: " + key  + " (Replica: "+ i + ")  Not found on " + responsibleNode);
+      responsibleNode = getResponsibleNode(chordKey, i);
+      if (!nodeDataMap.get(responsibleNode).containsKey(chordKey.getKey())) {
+        logger.error("Key: " + chordKey  + " (Replica: "+ i + ")  Not found on " + responsibleNode);
         result = false;
       } else {
-        DataContainer c = nodeDataMap.get(responsibleNode).get(key);
+        DataContainer c = nodeDataMap.get(responsibleNode).get(chordKey.getKey());
         if (c.replicaNumber != i) {
-          logger.error("Key: " + key  + " Replica should be: "+ i + " found: " +
+          logger.error("Key: " + chordKey  + " Replica should be: "+ i + " found: " +
                        c.replicaNumber + " on node " + responsibleNode);
         }
         result = false;
