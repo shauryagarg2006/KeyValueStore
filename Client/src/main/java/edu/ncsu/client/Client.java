@@ -171,8 +171,11 @@ public class Client {
       case "TEST":
         c.testKeys();
         break;
-      default:
+      default: {
+        c.putKeys();
+        c.testKeys();
         break;
+      }
     }
   }
 }

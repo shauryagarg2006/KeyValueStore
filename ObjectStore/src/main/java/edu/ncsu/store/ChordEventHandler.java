@@ -34,8 +34,7 @@ public class ChordEventHandler implements UpcallEventHandler {
     for (Map.Entry<String, DataContainer> entry : allKeys.entrySet()) {
       ChordID<String> chordKey = new ChordID<>(entry.getKey());
       DataContainer valueContainer = entry.getValue();
-      if (valueContainer.replicaNumber != 1 ||
-          chordKey.inRange(prevPredecessor, newPredecessor, false, true)) {
+      if (chordKey.inRange(prevPredecessor, newPredecessor, false, true)) {
         // This key ID is either a replica or belongs to new predecessor
         // This key needs to be moved to new predecessor.
         misplacedObjects.put(chordKey, valueContainer);
