@@ -70,7 +70,7 @@ public class Client {
         long before_time = System.currentTimeMillis();
         handle.put(e.getKey(), e.getValue());
         long after_time = System.currentTimeMillis();
-        logger.debug("Time Taken to put key : " + (after_time - before_time));
+        //logger.debug("Time Taken to put key : " + (after_time - before_time));
         average_time += after_time - before_time;
         }
     } catch (RemoteException e) {
@@ -94,7 +94,7 @@ public class Client {
         if (retrievedValue == null || !retrievedValue.equals(e.getValue())) {
           logger.error("Value for Key: " + e.getKey() + " Could not be found.");
         }
-        logger.debug("Time Taken to get key : " + (after_time - before_time));
+        //logger.debug("Time Taken to get key : " + (after_time - before_time));
         average_time += after_time - before_time;
       }
     } catch (RemoteException e) {
