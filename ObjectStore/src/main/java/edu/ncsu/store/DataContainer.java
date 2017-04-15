@@ -14,4 +14,8 @@ public class DataContainer implements Serializable {
     this.value = value;
     this.replicaNumber = replicaNumber;
   }
+
+  public String toString() {
+    return replicaNumber + ":[]";
+  }
 }

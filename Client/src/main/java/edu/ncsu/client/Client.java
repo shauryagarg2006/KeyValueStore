@@ -55,7 +55,7 @@ public class Client {
         ipList.add(new ChordID<>(InetAddress.getByName(line)));
       }
       Collections.sort(ipList);
-      logger.debug("Active nodes: " + ipListPath);
+      logger.debug("Active nodes: " + ipList);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -94,7 +94,7 @@ public class Client {
         if (retrievedValue == null || !retrievedValue.equals(e.getValue())) {
           logger.error("Value for Key: " + e.getKey() + " Could not be found.");
         }
-        logger.debug("Time Taken to put key : " + (after_time - before_time));
+        logger.debug("Time Taken to get key : " + (after_time - before_time));
         average_time += after_time - before_time;
       }
     } catch (RemoteException e) {

@@ -109,10 +109,12 @@ class ObjectStore implements ObjectStoreOperations {
 
     try {
       for (Map.Entry<ChordID<String>, DataContainer> e : replicaData.entrySet()) {
+        logger.debug("Putting key :" + e.getKey() + " value: " + e.getValue() +
+                     " into " + ObjectStoreService.getChordSession().getChordNodeID());
         localStorage.put(e.getKey().getKey(), e.getValue());
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Exception ex) {
+      ex.printStackTrace();
       return false;
     }
     return true;
