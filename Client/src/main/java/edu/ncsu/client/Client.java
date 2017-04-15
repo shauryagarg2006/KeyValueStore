@@ -117,21 +117,22 @@ public class Client {
 
   private boolean verifyKeyLocation(ChordID<String> key) {
     ChordID<InetAddress> responsibleNode = null;
+    boolean result = true;
     for (int i = 1; i <= StoreConfig.REPLICATION_COUNT; i++) {
       responsibleNode = getResponsibleNode(key, i);
-      if (!nodeDataMap.get(responsibleNode).containsKey(key)) {
+      if (!nodeDataMap.get(responsibleNode).containsKey(key.getKey())) {
         logger.error("Key: " + key  + " (Replica: "+ i + ")  Not found on " + responsibleNode);
-        return false;
+        result = false;
       } else {
         DataContainer c = nodeDataMap.get(responsibleNode).get(key);
         if (c.replicaNumber != i) {
           logger.error("Key: " + key  + " Replica should be: "+ i + " found: " +
                        c.replicaNumber + " on node " + responsibleNode);
-          return false;
         }
+        result = false;
       }
     }
-    return true;
+    return result;
   }
 
   public void testKeys() {
