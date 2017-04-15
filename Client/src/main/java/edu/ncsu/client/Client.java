@@ -39,7 +39,7 @@ public class Client {
          BufferedReader br = new BufferedReader(fr);) {
       String line;
       while ((line = br.readLine()) != null && keyValueMap.size() < nKeys) {
-        String data[] = line.split("$");
+        String data[] = line.split("\\$");
         keyValueMap.put(data[1], data[2]);
       }
     } catch (Exception e) {
