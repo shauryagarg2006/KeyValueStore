@@ -52,7 +52,7 @@ public class ChordEventHandler implements UpcallEventHandler {
       predecessorStore.putObjects(misplacedObjects);
       // If above operation did not throw an exception
       // only then delete those keys from your storage
-      store.deleteKeys(new ArrayList<>(misplacedObjects.keySet()));
+      //store.deleteKeys(new ArrayList<>(misplacedObjects.keySet()));
     } catch (Exception e) {
       e.printStackTrace();
     }
