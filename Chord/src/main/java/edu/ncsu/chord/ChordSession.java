@@ -40,18 +40,36 @@ public class ChordSession {
       e.printStackTrace();
     }
 
-    /* Schedule stabilize & fixFingers method to run after every 1 second */
-
-    ScheduledExecutorService stabilizer = Executors.newScheduledThreadPool(1);
-    stabilizer.scheduleAtFixedRate(() -> {
-      try {
-	node.stabilize();
-	node.fixFingers();
-	node.printNode();
-      } catch (RemoteException e) {
-	e.printStackTrace();
+    Thread stabilizer = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while(true) {
+          try {
+            Thread.sleep(ChordConfig.STABILIZER_PERIOD * 1000);
+            node.stabilize();
+            node.fixFingers();
+            node.printNode();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
       }
-    }, ChordConfig.STABILIZER_INITIAL_DELAY, ChordConfig.STABILIZER_PERIOD, TimeUnit.SECONDS);
+    });
+    stabilizer.start();
+
+
+    /* Schedule stabilize & fixFingers method to run after every 1 second */
+//
+//    ScheduledExecutorService stabilizer = Executors.newScheduledThreadPool(1);
+//    stabilizer.scheduleAtFixedRate(() -> {
+//      try {
+//        node.stabilize();
+//        node.fixFingers();
+//        node.printNode();
+//      } catch (RemoteException e) {
+//        e.printStackTrace();
+//      }
+//    }, ChordConfig.STABILIZER_INITIAL_DELAY, ChordConfig.STABILIZER_PERIOD, TimeUnit.SECONDS);
 
     return result;
   }
