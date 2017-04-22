@@ -276,35 +276,13 @@ class ChordNode implements ChordOperations {
   }
 
 
-  private void updateSuccessorListEntry(int index) throws RemoteException {
-    if (index == 0 || index > successorList.size()) {
-      logger.error("Wrong index passed to updateSuccessorListEntry.");
-      return;
-    }
-
-    ChordOperations previousEntryROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(index - 1)
-                                                                       .getKey());
-    if (previousEntryROR != null) {
-      try {
-        ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
-        //      synchronized (this) {
-        if (index == successorList.size())
-          successorList.add(index, nextSuccessor);
-        else
-          successorList.set(index, nextSuccessor);
-        //      }
-      } catch (RemoteException e) {
-        e.printStackTrace();
-      }
-    }
-  }
 
   private void updateSuccessorList() throws RemoteException {
     logger.debug("[Entry] Method:  updateSuccessorList " + "@" + selfChordID +
 		 " Caller: " + "Parameters: ");
 
     /* Flush all entries from successor list and regenerate it */
-    successorList.clear();
+    //successorList.clear();
 
     /* First entry in the successor list is direct successor */
 //    synchronized (this) {
@@ -316,17 +294,21 @@ class ChordNode implements ChordOperations {
 //    }
 
     /* First update current entries in the list */
-    for (int i = 1; i < successorList.size(); i++) {
+    for (int i = 1; i < ChordConfig.SUCCESSOR_LIST_MAX_SIZE; i++) {
       /* Set (i+1)'th successor entry by querying i'th entry node for its successor */
-      updateSuccessorListEntry(i);
+      try {
+        ChordOperations previousEntryROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(i - 1).getKey());
+        ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
+        if (i < successorList.size()) {
+          successorList.add(nextSuccessor);
+        } else {
+          successorList.set(i, nextSuccessor);
+        }
+      } catch (Exception e ) {
+        e.printStackTrace();
+      }
     }
 
-    /* If there is still space in successor list i.e successorList.size() < SUCCESSOR_LIST_MAX_SIZE
-    try to find more entries.
-     */
-    for (int i = successorList.size(); i < SUCCESSOR_LIST_MAX_SIZE; i++) {
-      updateSuccessorListEntry(i);
-    }
 
     logger.info("Successor list for node  " + selfChordID + " " + successorList);
 
