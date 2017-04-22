@@ -45,10 +45,10 @@ public class ChordSession {
       public void run() {
         while(true) {
           try {
-            Thread.sleep(ChordConfig.STABILIZER_PERIOD * 1000);
             node.stabilize();
             node.fixFingers();
             node.printNode();
+            Thread.sleep(ChordConfig.STABILIZER_PERIOD * 1000);
           } catch (Exception e) {
             e.printStackTrace();
           }

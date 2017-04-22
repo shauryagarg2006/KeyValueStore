@@ -75,7 +75,7 @@ class ChordNode implements ChordOperations {
     upcallHandler.handleEvent(updateEvent, prevSuccessor, successorChordID);
 
     logger.debug("[Exit] Method:  setSuccessor " + "@" + selfChordID +
-		 " Caller: " + selfChordID + "Parameters: " + successorChordID);
+                 " Caller: " + selfChordID + "Parameters: " + successorChordID);
   }
 
   @Override
@@ -83,7 +83,7 @@ class ChordNode implements ChordOperations {
     logger.debug("[Entry] Method:  getSuccessor " + "@" + selfChordID +
 		 " Caller: " + callerID + "Parameters: ");
     logger.debug("[Exit] Method:  getSuccessor " + "@" + selfChordID +
-		 " Caller: " + callerID + "Parameters: ");
+                 " Caller: " + callerID + "Parameters: ");
     return fingerTable.getEntry(0).responsibleNodeID;
   }
 
@@ -100,7 +100,12 @@ class ChordNode implements ChordOperations {
     if (predecessorROR == null) {
       logger.error("Unable to get RMI object for " + predecessorID);
     } else {
-      successorID = predecessorROR.getSuccessor(selfChordID);
+      try {
+        successorID = predecessorROR.getSuccessor(selfChordID);
+      } catch (Exception e) {
+        e.printStackTrace();
+        successorID = null;
+      }
     }
     logger.debug("Successor ID for " + id + " is found to be " + successorID);
 
@@ -126,13 +131,18 @@ class ChordNode implements ChordOperations {
 
     ChordID<InetAddress> predecessor = selfChordID;
     ChordOperations predecessorROR = ChordRMIUtils.getRemoteNodeObject(selfChordID.getKey());
-    while (!id.inRange(predecessor, predecessorROR.getSuccessor(selfChordID), false, true)) {
-      predecessor = predecessorROR.getClosestPrecedingFinger(selfChordID, id);
-      predecessorROR = ChordRMIUtils.getRemoteNodeObject(predecessor.getKey());
-      if (predecessorROR == null) {
-	logger.error("Unable to get RMI object for " + predecessor);
-	predecessor = null;
+    try {
+      while (!id.inRange(predecessor, predecessorROR.getSuccessor(selfChordID), false, true)) {
+        predecessor = predecessorROR.getClosestPrecedingFinger(selfChordID, id);
+        predecessorROR = ChordRMIUtils.getRemoteNodeObject(predecessor.getKey());
+        if (predecessorROR == null) {
+          logger.error("Unable to get RMI object for " + predecessor);
+          predecessor = null;
+        }
       }
+    } catch (RemoteException e) {
+      e.printStackTrace();
+      predecessor = null;
     }
 
     logger.debug("Predecessor found is: " + predecessor);
@@ -218,17 +228,28 @@ class ChordNode implements ChordOperations {
       logger.error("Unable to get RMI object for " + successorChordID
 		   + " will try again in next interval");
     } else {
-      ChordID<InetAddress> predecessorOfSuccessor = successorROR.getPredecessor(selfChordID);
-      logger.debug("Predecessor found from successor is " + predecessorOfSuccessor);
-      if (predecessorOfSuccessor.inRange(selfChordID, successorChordID, false, false)) {
-	setSuccessor(Event.NEW_SUCCESSOR, predecessorOfSuccessor);
+      try {
+        ChordID<InetAddress> predecessorOfSuccessor = successorROR.getPredecessor(selfChordID);
+        logger.debug("Predecessor found from successor is " + predecessorOfSuccessor);
+        if (predecessorOfSuccessor.inRange(selfChordID, successorChordID, false, false)) {
+          setSuccessor(Event.NEW_SUCCESSOR, predecessorOfSuccessor);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
+
       successorROR = ChordRMIUtils.getRemoteNodeObject(getSuccessor(selfChordID).getKey());
       if (successorROR == null) {
 	logger.error("Unable to notify " + getSuccessor(selfChordID)
 		     + " will try again in next interval");
       } else {
-	successorROR.notify(selfChordID, selfChordID);
+        try {
+          successorROR.notify(selfChordID, selfChordID);
+        } catch (Exception e) {
+          logger.error("Unable to notify " + getSuccessor(selfChordID)
+                       + " will try again in next interval");
+          e.printStackTrace();
+        }
       }
     }
 
@@ -264,13 +285,17 @@ class ChordNode implements ChordOperations {
     ChordOperations previousEntryROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(index - 1)
                                                                        .getKey());
     if (previousEntryROR != null) {
-      ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
-//      synchronized (this) {
+      try {
+        ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
+        //      synchronized (this) {
         if (index == successorList.size())
           successorList.add(index, nextSuccessor);
         else
           successorList.set(index, nextSuccessor);
-//      }
+        //      }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -351,8 +376,12 @@ class ChordNode implements ChordOperations {
 		.inRange(selfChordID, fingerTable.getEntry(i - 1).responsibleNodeID, true, false)) {
 	  responsibleNode = fingerTable.getEntry(i - 1).responsibleNodeID;
 	} else {
-	  responsibleNode =
-	      successorROR.getSuccessor(selfChordID, fingerTable.getEntry(i).hashRangeStart);
+          try {
+            responsibleNode = successorROR.getSuccessor(selfChordID, fingerTable.getEntry(i).hashRangeStart);
+          } catch (RemoteException e) {
+            e.printStackTrace();
+            responsibleNode = selfChordID;
+          }
 	}
 
 //        synchronized (this) {
