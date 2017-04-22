@@ -128,8 +128,8 @@ public class Client {
         if (c.replicaNumber != i) {
           logger.error("Key: " + chordKey  + " Replica should be: "+ i + " found: " +
                        c.replicaNumber + " on node " + responsibleNode);
+          result = false;
         }
-        result = false;
       }
     }
     return result;
