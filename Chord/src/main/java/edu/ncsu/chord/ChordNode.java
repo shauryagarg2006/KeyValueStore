@@ -300,12 +300,13 @@ class ChordNode implements ChordOperations {
         ChordOperations previousEntryROR = ChordRMIUtils.getRemoteNodeObject(successorList.get(i - 1).getKey());
         ChordID<InetAddress> nextSuccessor = previousEntryROR.getSuccessor(selfChordID);
         if (i < successorList.size()) {
-          successorList.add(nextSuccessor);
-        } else {
           successorList.set(i, nextSuccessor);
+        } else {
+          successorList.add(nextSuccessor);
         }
       } catch (Exception e ) {
         e.printStackTrace();
+        break;
       }
     }
 
