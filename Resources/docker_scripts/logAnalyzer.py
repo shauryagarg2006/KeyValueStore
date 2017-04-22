@@ -106,6 +106,7 @@ def log_analysis(log_file_path, type_check, number_check):
             elif "FAIL" == type_check:
                 if "closing" in line:
                     timing.append(line[:8])
+    begin_time = timing[-number_check]
     if begin_time == "":
         print "UNSTABLE"
         return
