@@ -136,12 +136,14 @@ public class Client {
   }
 
   public void testKeys() {
+    boolean result = true;
     nodeDataMap = new HashMap<>();
     for (ChordID<InetAddress> nodeID : ipList) {
       StoreClientAPI handle = ClientRMIUtils.getRemoteClient(nodeID.getKey());
       try {
         HashMap<String, DataContainer> nodeStoreDump = handle.dumpStore();
         nodeDataMap.put(nodeID, nodeStoreDump);
+        System.out.println("Node: " + nodeID + " has " + nodeStoreDump.size() + " keys.");
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -150,7 +152,12 @@ public class Client {
     /* Iterate over all keys to verify each key one by one */
     for (Map.Entry<String, String> e : keyValueMap.entrySet()) {
       ChordID<String> chordKey = new ChordID<>(e.getKey());
-      verifyKeyLocation(chordKey);
+      result &= verifyKeyLocation(chordKey);
+    }
+    if (result) {
+      System.out.println("Success: Key location verification");
+    } else {
+      System.out.println("Error: Key location verification");
     }
   }
 
